@@ -2,18 +2,17 @@ package la.jitco.jana;
 
 public class FunctionGenerator extends Module {
     
-    public ModIn frequency;
-    public ModIn phase;
-    public ModIn level;
-    
-    public ModOut mainOut;
-    public ModOut auxOut1;
-    public ModOut auxOut2;
-    public ModOut auxOut3;
-    
     FunctionGenerator()
     {
-        super(ModuleType.FUNCTION_GENERATOR);
-    }
+        super();
+        modInArray = new ModIn[] {new ModIn("frequency"),
+                                  new ModIn("phase"),
+                                  new ModIn("level")};
+        modOutArray = new ModOut[] {new ModOut("mainOut"),
+                                    new ModOut("auxOut1"),
+                                    new ModOut("auxOut2"),
+                                    new ModOut("auxOut3")};
+        createModMaps();
+        }
 
 }

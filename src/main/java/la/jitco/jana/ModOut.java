@@ -1,10 +1,11 @@
 package la.jitco.jana;
 
-public class ModOut {
+public class ModOut extends ModIO {
     ModIn destination;
     
-    ModOut()
+    ModOut(String name)
     {
+        super(name);
         destination = null;
     }
     
