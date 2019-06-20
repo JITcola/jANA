@@ -5,10 +5,16 @@ public class Delay extends Module {
     Delay()
     {
         super();
-        modInArray = new ModIn[] {new ModIn("time"),
+        paramArray = new Parameter[] {
+                         new PositiveIntegerParameter("initTime"),
+                         new NonnegativeIntegerParameter("initFeedback"),
+                         new NonnegativeIntegerParameter("initLevel")};
+        modInArray = new ModIn[] {new ModIn("input"),
+                                  new ModIn("time"),
                                   new ModIn("feedback"),
                                   new ModIn("level")};
         modOutArray = new ModOut[] {new ModOut("mainOut")};
-        createModMaps();
+        createMaps();
     }
+    
 }

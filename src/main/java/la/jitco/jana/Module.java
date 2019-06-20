@@ -13,14 +13,12 @@ public class Module {
     private BigInteger sampleRate;
     private BigInteger mpfrBits;
     
-    // private ParameterList params; // static parameters, NOT modulation targets
-    public ModIn[] modInArray;
+    protected Parameter[] paramArray; // static parameters, NOT modulation targets
+    protected ModIn[] modInArray;
     protected ModOut[] modOutArray;
+    public Map<String, Parameter> paramMap;
     public Map<String, ModIn> inModMap;
     public Map<String, ModOut> outModMap;
-
-    // private ModuleList modTargets;
-    // private ModuleList modSources;
     
     private static int nextId = 0;
     private static List<Integer> deletedIds = new ArrayList<Integer>();
@@ -38,23 +36,33 @@ public class Module {
         sampleRate = new BigInteger("44100");
         mpfrBits = new BigInteger("256");
         
+        paramMap = new HashMap<String, Parameter>();
         inModMap = new HashMap<String, ModIn>();
         outModMap = new HashMap<String, ModOut>();
                
     }
     
-    protected void createModMaps()
+    protected void createMaps()
     {
+        for (int i = 0; i < paramArray.length; ++i) {
+            paramMap.put(paramArray[i].name, paramArray[i]);
+        }
         for (int i = 0; i < modInArray.length; ++i) {
             inModMap.put(modInArray[i].name, modInArray[i]);
         }
-        for (int i = 0; i < modOutArray.length; ++i)
+        for (int i = 0; i < modOutArray.length; ++i) {
             outModMap.put(modOutArray[i].name, modOutArray[i]);
+        }
     }
     
     int getId()
     {
         return id;
+    }
+    
+    Parameter getParam(String paramName)
+    {
+        return paramMap.get(paramName);
     }
     
     ModIn getIn(String modName)
@@ -81,4 +89,5 @@ public class Module {
         System.out.printf(fg1.getOut("mainOut").destination.name + "%n" +
                           fg2.getOut("auxOut1").destination.name + "%n");
     }
+    
 }

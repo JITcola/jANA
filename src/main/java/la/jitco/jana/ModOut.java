@@ -1,6 +1,7 @@
 package la.jitco.jana;
 
 public class ModOut extends ModIO {
+    
     ModIn destination;
     
     ModOut(String name)
@@ -19,4 +20,5 @@ public class ModOut extends ModIO {
     {
         this.destination = null;
     }
+    
 }
