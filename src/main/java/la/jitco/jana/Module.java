@@ -86,8 +86,8 @@ public class Module {
                           "%n" + d1.getId() + "%n" + d2.getId() + "%n");
         fg1.getOut("mainOut").modulate(fg2.getIn("frequency"));
         fg2.getOut("auxOut1").modulate(d1.getIn("time"));
-        System.out.printf(fg1.getOut("mainOut").destination.name + "%n" +
-                          fg2.getOut("auxOut1").destination.name + "%n");
+        System.out.printf(fg1.getOut("mainOut").destination.getName() + "%n" +
+                          fg2.getOut("auxOut1").destination.getName() + "%n");
     }
     
 }

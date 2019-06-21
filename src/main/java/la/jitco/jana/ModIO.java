@@ -9,4 +9,9 @@ abstract public class ModIO {
         this.name = name;
     }
     
+    public String getName()
+    {
+        return name;
+    }
+    
 }
