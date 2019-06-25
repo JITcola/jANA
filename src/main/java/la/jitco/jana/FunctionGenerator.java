@@ -12,15 +12,16 @@ public class FunctionGenerator extends Module {
                          new FloatingPointParameter("initPhase"),
                          new FloatingPointParameter("initLevel")};
         modInArray = new ModIn[] {
-                         new ModIn("frequency"),
-                         new ModIn("phase"),
-                         new ModIn("level")};
+                         new ModIn(this, "frequency"),
+                         new ModIn(this, "phase"),
+                         new ModIn(this, "level")};
         modOutArray = new ModOut[] {
-                         new ModOut("mainOut"),
-                         new ModOut("auxOut1"),
-                         new ModOut("auxOut2"),
-                         new ModOut("auxOut3")};
+                         new ModOut(this, "mainOut"),
+                         new ModOut(this, "auxOut1"),
+                         new ModOut(this, "auxOut2"),
+                         new ModOut(this, "auxOut3")};
         createMaps();
+        weightTaskMultiplier = 10;
         }
 
 }

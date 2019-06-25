@@ -9,12 +9,13 @@ public class Delay extends Module {
                          new PositiveIntegerParameter("initTime"),
                          new NonnegativeIntegerParameter("initFeedback"),
                          new NonnegativeIntegerParameter("initLevel")};
-        modInArray = new ModIn[] {new ModIn("input"),
-                                  new ModIn("time"),
-                                  new ModIn("feedback"),
-                                  new ModIn("level")};
-        modOutArray = new ModOut[] {new ModOut("mainOut")};
+        modInArray = new ModIn[] {new ModIn(this, "input"),
+                                  new ModIn(this, "time"),
+                                  new ModIn(this, "feedback"),
+                                  new ModIn(this, "level")};
+        modOutArray = new ModOut[] {new ModOut(this, "mainOut")};
         createMaps();
+        weightTaskMultiplier = 5;
     }
     
 }

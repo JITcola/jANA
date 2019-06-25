@@ -4,10 +4,15 @@ public class ModIn extends ModIO{
     
     ModOut source;
     
-    ModIn(String name)
+    ModIn(Module parent, String name)
     {
-        super(name);
+        super(parent, name);
         source = null;
+    }
+    
+    ModOut getSource()
+    {
+        return source;
     }
     
     public void setModulator(ModOut source)

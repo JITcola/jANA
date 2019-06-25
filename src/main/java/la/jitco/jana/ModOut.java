@@ -4,10 +4,15 @@ public class ModOut extends ModIO {
     
     ModIn destination;
     
-    ModOut(String name)
+    ModOut(Module parent, String name)
     {
-        super(name);
+        super(parent, name);
         destination = null;
+    }
+    
+    ModIn getDestination()
+    {
+        return destination;
     }
     
     public void modulate(ModIn destination)

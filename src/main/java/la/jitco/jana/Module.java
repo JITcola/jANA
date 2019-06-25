@@ -10,8 +10,8 @@ public class Module {
     
     public int id;
     private Precision bitDepth;
-    private BigInteger sampleRate;
-    private BigInteger mpfrBits;
+    private int sampleRate;
+    private int mpfrBits;
     
     protected Parameter[] paramArray; // static parameters, NOT modulation targets
     protected ModIn[] modInArray;
@@ -19,6 +19,10 @@ public class Module {
     public Map<String, Parameter> paramMap;
     public Map<String, ModIn> inModMap;
     public Map<String, ModOut> outModMap;
+    
+    protected int weightTaskMultiplier;
+    protected int weightBitDepthMultiplier;
+    private int weight;
     
     private static int nextId = 0;
     private static List<Integer> deletedIds = new ArrayList<Integer>();
@@ -32,14 +36,48 @@ public class Module {
             id = deletedIds.remove(0);            
         }
         
-        bitDepth = Precision.FLOAT_64;
-        sampleRate = new BigInteger("44100");
-        mpfrBits = new BigInteger("256");
+        setBitDepth(Precision.FLOAT_64);
+        sampleRate = 44100;
+        mpfrBits = 256;
         
         paramMap = new HashMap<String, Parameter>();
         inModMap = new HashMap<String, ModIn>();
         outModMap = new HashMap<String, ModOut>();
+        
+        weightTaskMultiplier = 0;
+        weight = 0;
                
+    }
+    
+    public void setBitDepth(Precision precision)
+    {
+        if (precision == Precision.FLOAT_32) {
+            bitDepth = precision;
+            mpfrBits = 32;
+            weightBitDepthMultiplier = 1;
+        } else if (precision == Precision.FLOAT_64) {
+            bitDepth = precision;
+            mpfrBits = 64;
+            weightBitDepthMultiplier = 1;
+        } else {
+            System.err.printf("Bad precision argument passed to ");
+            System.err.printf("setBitDepth method of class Module.%n");
+        }            
+    }
+    
+    public void setBitDepth(Precision precision, int bits)
+    {
+        if (precision == Precision.MPFR) {
+            bitDepth = precision;
+            mpfrBits = bits;
+            weightBitDepthMultiplier = bits; // Use number of bits as
+                                             // approximation to time penalty
+                                             // for using MPFR
+        } else {
+            System.err.printf("Bad precision argument passed to ");
+            System.err.printf("setBitDepth method of class Module.%n");
+        }
+    
     }
     
     protected void createMaps()
@@ -65,9 +103,25 @@ public class Module {
         return paramMap.get(paramName);
     }
     
+    List<String> getParams()
+    {
+        List<String> paramList = new ArrayList<String>();
+        for (Parameter param: paramArray)
+            paramList.add(param.getName());
+        return paramList;
+    }
+    
     ModIn getIn(String modName)
     {
         return inModMap.get(modName);
+    }
+    
+    List<String> getIns()
+    {
+        List<String> inList = new ArrayList<String>();
+        for (ModIn in: modInArray)
+            inList.add(in.getName());
+        return inList;
     }
     
     ModOut getOut(String modName)
@@ -75,6 +129,35 @@ public class Module {
         return outModMap.get(modName);
     }
     
+    List<String> getOuts()
+    {
+        List<String> outList = new ArrayList<String>();
+        for (ModOut out: modOutArray)
+            outList.add(out.getName());
+        return outList;
+    }
+    
+    List<Integer> getModulationSources()
+    {
+        List<Integer> modSourceList = new ArrayList<Integer>();
+        for (ModIn in: modInArray)
+            modSourceList.add(in.getSource().getParentId());
+        return modSourceList;
+    }
+    
+    List<Integer> getModulationDestinations()
+    {
+        List<Integer> modDestinationList = new ArrayList<Integer>();
+        for (ModOut out: modOutArray)
+            modDestinationList.add(out.getDestination().getParentId());
+        return modDestinationList;
+    }
+    
+    public int getWeight()
+    {
+        return weight;
+    }
+            
     public static void main(String[] args)
     {
         Module fg1 = new FunctionGenerator();
