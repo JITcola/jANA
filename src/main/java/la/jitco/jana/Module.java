@@ -9,9 +9,9 @@ import java.util.HashMap;
 public class Module {
     
     public int id;
-    private Precision bitDepth;
-    private int sampleRate;
-    private int mpfrBits;
+    private Precision bitDepth = Precision.DOUBLE;
+    private BigInteger sampleRate = new BigInteger("44100");
+    private BigInteger mpfrBits = new BigInteger("64");
     
     protected Parameter[] paramArray; // static parameters, NOT modulation targets
     protected ModIn[] modInArray;
@@ -20,9 +20,10 @@ public class Module {
     public Map<String, ModIn> inModMap;
     public Map<String, ModOut> outModMap;
     
-    protected int weightTaskMultiplier;
-    protected int weightBitDepthMultiplier;
-    private int weight;
+    protected BigInteger weightTaskMultiplier = new BigInteger("0");
+    protected BigInteger weightBitDepthMultiplier = new BigInteger("1");
+    protected BigInteger weightSampleRateMultiplier = new BigInteger("44100");
+    private BigInteger weight;
     
     private static int nextId = 0;
     private static List<Integer> deletedIds = new ArrayList<Integer>();
@@ -36,48 +37,57 @@ public class Module {
             id = deletedIds.remove(0);            
         }
         
-        setBitDepth(Precision.FLOAT_64);
-        sampleRate = 44100;
-        mpfrBits = 256;
-        
         paramMap = new HashMap<String, Parameter>();
         inModMap = new HashMap<String, ModIn>();
         outModMap = new HashMap<String, ModOut>();
         
-        weightTaskMultiplier = 0;
-        weight = 0;
-               
+        setWeight();        
     }
     
     public void setBitDepth(Precision precision)
     {
-        if (precision == Precision.FLOAT_32) {
+        if (precision == Precision.FLOAT) {
             bitDepth = precision;
-            mpfrBits = 32;
-            weightBitDepthMultiplier = 1;
-        } else if (precision == Precision.FLOAT_64) {
+            mpfrBits = new BigInteger("32");
+            weightBitDepthMultiplier = new BigInteger("1");
+        } else if (precision == Precision.DOUBLE) {
             bitDepth = precision;
-            mpfrBits = 64;
-            weightBitDepthMultiplier = 1;
-        } else {
-            System.err.printf("Bad precision argument passed to ");
-            System.err.printf("setBitDepth method of class Module.%n");
-        }            
-    }
-    
-    public void setBitDepth(Precision precision, int bits)
-    {
-        if (precision == Precision.MPFR) {
-            bitDepth = precision;
-            mpfrBits = bits;
-            weightBitDepthMultiplier = bits; // Use number of bits as
-                                             // approximation to time penalty
-                                             // for using MPFR
+            mpfrBits = new BigInteger("64");
+            weightBitDepthMultiplier = new BigInteger("1");
         } else {
             System.err.printf("Bad precision argument passed to ");
             System.err.printf("setBitDepth method of class Module.%n");
         }
+        setWeight();
+    }
     
+    public void setBitDepth(Precision precision, String bits)
+    {
+        if (precision == Precision.MULTIPRECISION) {
+            bitDepth = precision;
+            mpfrBits = new BigInteger(bits);
+            weightBitDepthMultiplier = new BigInteger(bits); // TODO: find actual
+                                                             // multiplier for
+                                                             // MPFR numbers
+        } else {
+            System.err.printf("Bad precision argument passed to ");
+            System.err.printf("setBitDepth method of class Module.%n");
+        }
+        setWeight();
+    }
+    
+    public void setSampleRate(BigInteger sampleRate)
+    {
+        this.sampleRate = sampleRate;
+        weightSampleRateMultiplier = sampleRate;
+        setWeight();
+    }
+    
+    public void setWeight()
+    {
+        weight = weightTaskMultiplier.multiply(
+                 weightBitDepthMultiplier).multiply(
+                 weightSampleRateMultiplier);
     }
     
     protected void createMaps()
@@ -153,7 +163,7 @@ public class Module {
         return modDestinationList;
     }
     
-    public int getWeight()
+    public BigInteger getWeight()
     {
         return weight;
     }
@@ -171,6 +181,10 @@ public class Module {
         fg2.getOut("auxOut1").modulate(d1.getIn("time"));
         System.out.printf(fg1.getOut("mainOut").destination.getName() + "%n" +
                           fg2.getOut("auxOut1").destination.getName() + "%n");
+        fg1.setBitDepth(Precision.MULTIPRECISION, "99");
+        d1.setSampleRate(new BigInteger("384000"));
+        System.out.println(fg1.getWeight());
+        System.out.println(d1.getWeight());
     }
     
 }

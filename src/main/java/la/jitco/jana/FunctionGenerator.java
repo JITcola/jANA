@@ -1,5 +1,7 @@
 package la.jitco.jana;
 
+import java.math.BigInteger;
+
 public class FunctionGenerator extends Module {
     
     FunctionGenerator()
@@ -21,7 +23,8 @@ public class FunctionGenerator extends Module {
                          new ModOut(this, "auxOut2"),
                          new ModOut(this, "auxOut3")};
         createMaps();
-        weightTaskMultiplier = 10;
+        weightTaskMultiplier = new BigInteger("10"); // TODO: find actual value
+        setWeight();
         }
 
 }

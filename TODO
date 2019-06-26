@@ -1,0 +1,3 @@
+Change static main methods into tests
+Find accurate weightTaskMultipliers for modules
+Find accurate weightBitDepthMultiplier for MULTIPRECISION
