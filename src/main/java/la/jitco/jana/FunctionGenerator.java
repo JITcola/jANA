@@ -23,7 +23,7 @@ public class FunctionGenerator extends Module {
                          new ModOut(this, "auxOut2"),
                          new ModOut(this, "auxOut3")};
         createMaps();
-        weightTaskMultiplier = new BigInteger("10"); // TODO: find actual value
+        weightTaskMultiplier = 10; // TODO: find actual value
         setWeight();
         }
 

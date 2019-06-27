@@ -17,7 +17,7 @@ public class Delay extends Module {
                                   new ModIn(this, "level")};
         modOutArray = new ModOut[] {new ModOut(this, "mainOut")};
         createMaps();
-        weightTaskMultiplier = new BigInteger("5"); // TODO: find actual value
+        weightTaskMultiplier = 5; // TODO: find actual value
         setWeight();
     }
     
