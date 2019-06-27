@@ -15,3 +15,8 @@ load the program dynamically, e.g. using dlopen()
 
 Interesting project:
 https://bellard.org/tcc/
+
+***
+
+After reading DSP book (not Oppenheim) I thought to myself:
+ consider doing bit depth conversion by using round-to-nearest.
