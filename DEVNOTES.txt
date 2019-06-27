@@ -1,0 +1,17 @@
+Interesting stackoverflow post: https://stackoverflow.com/questions/11016078/is-it-possible-to-create-a-function-dynamically-during-runtime-in-c
+
+***
+
+Interesting answer:
+Yes, of course, without any tools mentioned in the other answers, but simply using the C++ compiler.
+
+just follow these steps from within your C++ program (on linux, but must be similar on other OS)
+
+write a C++ program into a file (e.g. in /tmp/prog.cc), using an ofstream
+compile the program via system("c++ /tmp/prog.cc -o /tmp/prog.so -shared -fPIC");
+load the program dynamically, e.g. using dlopen()
+
+***
+
+Interesting project:
+https://bellard.org/tcc/
