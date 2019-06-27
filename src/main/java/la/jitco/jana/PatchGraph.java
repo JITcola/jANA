@@ -21,6 +21,9 @@ public class PatchGraph {
             case "FunctionGenerator":
                 moduleList.add(new FunctionGenerator());
                 break;
+            default:
+                System.err.println("Module type \"" + moduleType +
+                                   "\" not recognized");
         }
     }
     
@@ -38,6 +41,7 @@ public class PatchGraph {
         pg1.addModule("FunctionGenerator");
         pg1.deleteModule(pg1.moduleList.get(1));
         System.out.println(pg1.moduleList.size());
+        pg1.addModule("Out");
     }
 
 }

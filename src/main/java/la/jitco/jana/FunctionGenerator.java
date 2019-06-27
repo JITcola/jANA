@@ -10,7 +10,7 @@ public class FunctionGenerator extends Module {
         paramArray = new Parameter[] {
                          new FloatingPointParameter("baseFrequency"),
                          new OptionParameter("function",
-                             new String[] {"Sine", "Saw"}),
+                             new String[] {"Sine", "Saw", "Square"}),
                          new FloatingPointParameter("initPhase"),
                          new FloatingPointParameter("initLevel")};
         modInArray = new ModIn[] {

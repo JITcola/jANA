@@ -1,3 +1,4 @@
 Change static main methods into tests
 Find accurate weightTaskMultipliers for modules
 Find accurate weightBitDepthMultiplier for MULTIPRECISION
+Figure out how to deal with NaNs in evaluated Modules' arrays
