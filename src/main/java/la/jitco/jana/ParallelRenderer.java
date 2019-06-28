@@ -15,10 +15,9 @@ public class ParallelRenderer {
     public void createJobDAG()
     {
         ModuleGraph moduleGraph = new ModuleGraph(patch);
-        ModuleGraph moduleGraphTranspose = moduleGraph.transpose();
         JobDAG result = new JobDAG();
         
-        result.createJobs(moduleGraph, moduleGraphTranspose);
+        result.createJobs(moduleGraph);
         result.setJobWeights();
         result.setJobAdjacencies();
     }

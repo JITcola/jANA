@@ -11,6 +11,8 @@ public class ModuleGraph {
     public Map<ModuleGraphNode, List<ModuleGraphNode>> nodesAdjacentTo = 
             new HashMap<ModuleGraphNode, List<ModuleGraphNode>>();
     
+    private int time = 0;
+    
     ModuleGraph()
     {
     }
@@ -58,6 +60,28 @@ public class ModuleGraph {
 
     public void depthFirstSearch()
     {
-        // TODO: implement DFS
+        for (ModuleGraphNode node: nodeList) {
+            node.color = Color.WHITE;
+            node.predecessor = null;
+        }
+        for (ModuleGraphNode node: nodeList)
+            if (node.color == Color.WHITE)
+                visit(node);
+        time = 0;
+    }
+    
+    private void visit(ModuleGraphNode node)
+    {
+        time += 1;
+        node.discovered = time;
+        node.color = Color.GRAY;
+        for (ModuleGraphNode adjacentNode: nodesAdjacentTo.get(node))
+            if (adjacentNode.color == Color.WHITE) {
+                adjacentNode.predecessor = node;
+                visit(adjacentNode);
+            }
+        node.color = Color.BLACK;
+        time += 1;
+        node.finished = time;
     }
 }
