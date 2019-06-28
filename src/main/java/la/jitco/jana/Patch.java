@@ -3,11 +3,12 @@ package la.jitco.jana;
 import java.util.List;
 import java.util.ArrayList;
 
-public class PatchGraph {
+public class Patch {
     
     public List<Module> moduleList = new ArrayList<Module>();
+    public int renderLength;
     
-    PatchGraph()
+    Patch()
     {
         moduleList.add(new Out());
     }
@@ -37,7 +38,7 @@ public class PatchGraph {
     
     public static void main(String[] args)
     {
-        PatchGraph pg1 = new PatchGraph();
+        Patch pg1 = new Patch();
         pg1.addModule("FunctionGenerator");
         pg1.deleteModule(pg1.moduleList.get(1));
         System.out.println(pg1.moduleList.size());

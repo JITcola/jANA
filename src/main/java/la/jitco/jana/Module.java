@@ -9,6 +9,7 @@ import java.util.HashMap;
 public class Module {
     
     public int id;
+    private String name = "Module " + id;
     private Precision bitDepth = Precision.DOUBLE;
     private BigInteger sampleRate = new BigInteger("44100");
     private BigInteger mpfrBits = new BigInteger("64");
@@ -19,6 +20,11 @@ public class Module {
     public Map<String, Parameter> paramMap;
     public Map<String, ModIn> inModMap;
     public Map<String, ModOut> outModMap;
+    
+    public Color color = Color.WHITE;
+    public Module predecessor = null;
+    public int discovered = -1;
+    public int finished = -1;
     
     protected double weightTaskMultiplier = 0;
     protected double weightBitDepthMultiplier = 1;
@@ -104,6 +110,11 @@ public class Module {
         return id;
     }
     
+    String getName()
+    {
+        return name;
+    }
+    
     Parameter getParam(String paramName)
     {
         return paramMap.get(paramName);
@@ -143,19 +154,19 @@ public class Module {
         return outList;
     }
     
-    List<Integer> getModulationSources()
+    List<Module> getModulationSources()
     {
-        List<Integer> modSourceList = new ArrayList<Integer>();
+        List<Module> modSourceList = new ArrayList<Module>();
         for (ModIn in: modInArray)
-            modSourceList.add(in.getSource().getParentId());
+            modSourceList.add(in.getSource().getParent());
         return modSourceList;
     }
     
-    List<Integer> getModulationDestinations()
+    List<Module> getModulationDestinations()
     {
-        List<Integer> modDestinationList = new ArrayList<Integer>();
+        List<Module> modDestinationList = new ArrayList<Module>();
         for (ModOut out: modOutArray)
-            modDestinationList.add(out.getDestination().getParentId());
+            modDestinationList.add(out.getDestination().getParent());
         return modDestinationList;
     }
     

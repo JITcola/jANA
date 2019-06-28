@@ -16,6 +16,11 @@ abstract public class ModIO {
         return parent.getId();
     }
     
+    public Module getParent()
+    {
+        return parent;
+    }
+    
     public String getName()
     {
         return name;
