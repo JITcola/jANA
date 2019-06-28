@@ -5,12 +5,17 @@ import java.util.ArrayList;
 
 public class Patch {
     
-    public List<Module> moduleList = new ArrayList<Module>();
+    private List<Module> moduleList = new ArrayList<Module>();
     public int renderLength;
     
     Patch()
     {
         moduleList.add(new Out());
+    }
+    
+    public List<Module> getModuleList()
+    {
+        return moduleList;
     }
     
     public void addModule(String moduleType)

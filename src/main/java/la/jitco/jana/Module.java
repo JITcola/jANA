@@ -21,11 +21,6 @@ public class Module {
     public Map<String, ModIn> inModMap;
     public Map<String, ModOut> outModMap;
     
-    public Color color = Color.WHITE;
-    public Module predecessor = null;
-    public int discovered = -1;
-    public int finished = -1;
-    
     protected double weightTaskMultiplier = 0;
     protected double weightBitDepthMultiplier = 1;
     protected double weightSampleRateMultiplier = 44100;
