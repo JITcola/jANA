@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Module {
     
     public int id;
-    private String name = "Module " + id;
+    protected String name = "Module " + id;
     private Precision bitDepth = Precision.DOUBLE;
     private BigInteger sampleRate = new BigInteger("44100");
     private BigInteger mpfrBits = new BigInteger("64");

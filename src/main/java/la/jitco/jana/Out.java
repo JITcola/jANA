@@ -7,6 +7,7 @@ public class Out extends Module {
 Out()
     {
         super();
+        name = "Out " + id;
         paramArray = new Parameter[] {};
         modInArray = new ModIn[] {new ModIn(this, "mainIn")};
         modOutArray = new ModOut[] {};

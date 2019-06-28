@@ -7,6 +7,7 @@ public class FunctionGenerator extends Module {
     FunctionGenerator()
     {
         super();
+        name = "FunctionGenerator " + id;
         paramArray = new Parameter[] {
                          new FloatingPointParameter("baseFrequency"),
                          new OptionParameter("function",
