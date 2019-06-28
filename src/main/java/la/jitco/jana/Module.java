@@ -153,7 +153,8 @@ public class Module {
     {
         List<Module> modSourceList = new ArrayList<Module>();
         for (ModIn in: modInArray)
-            modSourceList.add(in.getSource().getParent());
+            if (in.getSource() != null)
+                modSourceList.add(in.getSource().getParent());
         return modSourceList;
     }
     
@@ -161,7 +162,8 @@ public class Module {
     {
         List<Module> modDestinationList = new ArrayList<Module>();
         for (ModOut out: modOutArray)
-            modDestinationList.add(out.getDestination().getParent());
+            if (out.getDestination() != null)
+                modDestinationList.add(out.getDestination().getParent());
         return modDestinationList;
     }
     

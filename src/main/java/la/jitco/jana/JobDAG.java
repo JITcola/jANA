@@ -55,7 +55,7 @@ public class JobDAG {
         fg3.getOut("mainOut").modulate(fg4.getIn("frequency"));
         fg4.getOut("mainOut").modulate(fg5.getIn("frequency"));
         fg5.getOut("mainOut").modulate(fg4.getIn("frequency"));
-        fg2.getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("mainIn"));
+        // fg2.getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("mainIn"));
         
         ModuleGraph mg = new ModuleGraph(patch);
         JobDAG jobDAG = new JobDAG();

@@ -5,7 +5,7 @@ import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
 public class Playground {
-    
+    /*
     public static void main(String[] args)
     {
         int precision = 64;
@@ -29,5 +29,6 @@ public class Playground {
         System.out.println(result[11000]);
         System.out.println(result[43000]);
     }
+    */
 
 }
