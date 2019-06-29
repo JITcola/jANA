@@ -45,18 +45,17 @@ public class JobDAG {
     public static void main(String[] args)
     {
         Patch patch = new Patch();
-        FunctionGenerator fg1 = new FunctionGenerator();
-        FunctionGenerator fg2 = new FunctionGenerator();
-        FunctionGenerator fg3 = new FunctionGenerator();
-        FunctionGenerator fg4 = new FunctionGenerator();
-        FunctionGenerator fg5 = new FunctionGenerator();
+        patch.addModule("FunctionGenerator");
+        patch.addModule("FunctionGenerator");
+        patch.addModule("FunctionGenerator");
+        patch.addModule("FunctionGenerator");
+        patch.addModule("FunctionGenerator");
         
-        fg1.getOut("mainOut").modulate(fg2.getIn("frequency"));
-        fg3.getOut("mainOut").modulate(fg4.getIn("frequency"));
-        fg4.getOut("mainOut").modulate(fg5.getIn("frequency"));
-        fg5.getOut("mainOut").modulate(fg4.getIn("frequency"));
-        // fg2.getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("mainIn"));
-        
+        patch.getModuleList().get(1).getOut("mainOut").modulate(patch.getModuleList().get(2).getIn("frequency"));
+        patch.getModuleList().get(3).getOut("mainOut").modulate(patch.getModuleList().get(4).getIn("frequency"));
+        patch.getModuleList().get(4).getOut("mainOut").modulate(patch.getModuleList().get(5).getIn("frequency"));
+        patch.getModuleList().get(5).getOut("mainOut").modulate(patch.getModuleList().get(4).getIn("frequency"));
+                
         ModuleGraph mg = new ModuleGraph(patch);
         JobDAG jobDAG = new JobDAG();
         jobDAG.createJobs(mg);
