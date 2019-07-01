@@ -9,6 +9,6 @@ public class Job {
     
     public List<Module> moduleList = new ArrayList<Module>();
     public List<Job> adjacentJobs = new ArrayList<Job>();
-    public double weight;
+    public double weight = 0;
 
 }
