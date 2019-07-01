@@ -13,7 +13,7 @@ public class JobDAG {
     {
         createJobs(moduleGraph);
         setJobWeights();
-        setJobAdjacencies();
+        setJobAdjacenciesAndDependencies();
     }
     
     public void createJobs(ModuleGraph moduleGraph)
@@ -48,15 +48,18 @@ public class JobDAG {
                 job.weight += module.getWeight();
     }
     
-    public void setJobAdjacencies()
+    public void setJobAdjacenciesAndDependencies()
     {
         for (Job job: dag)
             for (Module module: job.moduleList)
                 for (Module adjModule: module.getModulationDestinations())
                     for (Job potentialAdjacency: dag)
                         if (potentialAdjacency != job && !job.adjacentJobs.contains(potentialAdjacency))
-                            if (potentialAdjacency.moduleList.contains(adjModule))
+                            if (potentialAdjacency.moduleList.contains(adjModule)) {
                                 job.adjacentJobs.add(potentialAdjacency);
+                                if (!potentialAdjacency.dependencies.contains(job))
+                                    potentialAdjacency.dependencies.add(job);
+                            }
     }
     
     public static void main(String[] args)
@@ -71,6 +74,7 @@ public class JobDAG {
         patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
         patch.addModule("Delay");
+        patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
@@ -99,6 +103,10 @@ public class JobDAG {
         patch.getModuleList().get(12).getOut("mainOut").modulate(patch.getModuleList().get(13).getIn("frequency"));
         patch.getModuleList().get(13).getOut("mainOut").modulate(patch.getModuleList().get(14).getIn("frequency"));
         patch.getModuleList().get(14).getOut("mainOut").modulate(patch.getModuleList().get(13).getIn("phase"));
+        patch.getModuleList().get(5).getOut("mainOut").modulate(patch.getModuleList().get(15).getIn("frequency"));
+        patch.getModuleList().get(8).getOut("auxOut1").modulate(patch.getModuleList().get(15).getIn("phase"));
+        patch.getModuleList().get(14).getOut("auxOut1").modulate(patch.getModuleList().get(15).getIn("level"));
+        patch.getModuleList().get(15).getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("mainIn"));
         
         ModuleGraph mg = new ModuleGraph(patch);
         JobDAG jobDAG = new JobDAG(mg);
@@ -115,6 +123,14 @@ public class JobDAG {
             for (Job adjJob: job.adjacentJobs)
                 System.out.println(adjJob.moduleList.get(0).getId());
             System.out.printf("---%n");
+        }
+        System.out.println(jobDAG.dag.size());
+        System.out.println("---");
+        for (Job job: jobDAG.dag) {
+            if (job.moduleList.contains(patch.getModuleList().get(15))) {
+                for (Job dependencyJob: job.dependencies)
+                    System.out.println(dependencyJob.moduleList.get(0).getId());
+            }
         }
     }
 
