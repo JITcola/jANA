@@ -2,3 +2,8 @@ Change static main methods into tests
 Find accurate weightTaskMultipliers for modules
 Find accurate weightBitDepthMultiplier for MULTIPRECISION
 Figure out how to deal with NaNs in evaluated Modules' arrays
+Allow deletion of Out from instances of Patch
+Go through lines in code which write to System.err and decide if they
+    should throw exceptions instead
+Incorporate actual number of ModOuts to compute into Job weight
+    calculations

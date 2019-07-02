@@ -24,3 +24,9 @@ After reading DSP book (not Oppenheim) I thought to myself:
 ***
 
 Spark and Hadoop are too complicated to do the distributed computation I want to do here; write your own fault-tolerant job scheduling code
+
+***
+
+Current code requires creation/deletion of a class extending Module and
+    creation/deletion of a case for the addModule method of Patch when 
+    creating or removing a type of Module from the program.

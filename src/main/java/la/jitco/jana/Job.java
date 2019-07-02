@@ -12,5 +12,15 @@ public class Job {
     public List<Job> dependencies = new ArrayList<Job>();
     public double weight = 0;
     public boolean completed = false;
+    
+    public List<Job> getDependencies()
+    {
+        return dependencies;
+    }
+    
+    public List<Job> getAdjacentJobs()
+    {
+        return adjacentJobs;
+    }
 
 }

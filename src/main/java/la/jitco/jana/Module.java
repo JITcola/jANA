@@ -171,6 +171,16 @@ public class Module {
     {
         return weight;
     }
+    
+    public ModIn[] getModInArray()
+    {
+        return modInArray;
+    }
+    
+    public ModOut[] getModOutArray()
+    {
+        return modOutArray;
+    }
             
     public static void main(String[] args)
     {

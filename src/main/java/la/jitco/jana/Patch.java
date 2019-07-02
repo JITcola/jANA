@@ -12,7 +12,7 @@ public class Patch {
     
     Patch()
     {
-        moduleList.add(new Out());
+        moduleList.add(new FunctionGenerator());
         outToRender = moduleList.get(0).getOut("mainOut");
     }
     
@@ -36,12 +36,17 @@ public class Patch {
         }
     }
     
-    public void deleteModule(Module module)
+    public void deleteModule(Module module) // TODO: allow deletion of Out
     {
-        if (module.getClass() != Out.class)
+        if (moduleList.contains(module)) {
             moduleList.remove(module);
+            for (ModOut modOut: module.getModOutArray())
+                modOut.getDestination().reset();
+            for (ModIn modIn: module.getModInArray())
+                modIn.getSource().reset();
+        }
         else
-            System.err.println("Can't remove Out from PatchGraph instance");
+            System.err.println("Module not in patch!");
     }
     
     public void setOut(ModOut out)
@@ -58,7 +63,7 @@ public class Patch {
         pg1.addModule("FunctionGenerator");
         pg1.deleteModule(pg1.moduleList.get(1));
         System.out.println(pg1.moduleList.size());
-        pg1.addModule("Out");
+        pg1.addModule("Delay");
     }
 
 }
