@@ -6,11 +6,14 @@ import java.util.ArrayList;
 public class Patch {
     
     private List<Module> moduleList = new ArrayList<Module>();
-    public int renderLength;
+    private ModOut outToRender;
+    public int renderLength = -1;
+    public SoundFileFormat format = SoundFileFormat.WAV_16_44100;
     
     Patch()
     {
         moduleList.add(new Out());
+        outToRender = moduleList.get(0).getOut("mainOut");
     }
     
     public List<Module> getModuleList()
@@ -39,6 +42,14 @@ public class Patch {
             moduleList.remove(module);
         else
             System.err.println("Can't remove Out from PatchGraph instance");
+    }
+    
+    public void setOut(ModOut out)
+    {
+        if (moduleList.contains(out.getParent()))
+            outToRender = out;
+        else
+            System.err.printf("Patch does not contain parent module of argument to setOut");
     }
     
     public static void main(String[] args)

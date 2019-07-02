@@ -10,7 +10,7 @@ Out()
         name = "Out " + id;
         paramArray = new Parameter[] {};
         modInArray = new ModIn[] {new ModIn(this, "mainIn")};
-        modOutArray = new ModOut[] {};
+        modOutArray = new ModOut[] {new ModOut(this, "mainOut")};
         createMaps();
         weightTaskMultiplier = 1; // TODO: find actual value
         setWeight();
