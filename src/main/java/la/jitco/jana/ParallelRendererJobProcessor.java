@@ -16,7 +16,7 @@ public class ParallelRendererJobProcessor implements Runnable {
         try {
             System.out.println("Job with module " + 
                                job.moduleList.get(0).getName() + " begun!");
-            Thread.sleep(10000);
+            Thread.sleep(5000);
             job.completed = true;
             System.out.println("Job with module " + 
                                job.moduleList.get(0).getName() + " complete!");

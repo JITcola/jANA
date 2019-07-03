@@ -25,19 +25,22 @@ public class Patch {
     
     public void addModule(String moduleType)
     {
-        int moduleId;
-        if (!deletedIds.isEmpty())
-            moduleId = deletedIds.remove(0);
-        else {
-            moduleId = nextId;
-            ++nextId;
-        }
         switch (moduleType) {
             case "Delay":
-                moduleList.add(new Delay(moduleId));
+                if (!deletedIds.isEmpty())
+                    moduleList.add(new Delay(deletedIds.remove(0)));
+                else {
+                    moduleList.add(new Delay(nextId));
+                    ++nextId;
+                }
                 break;
             case "FunctionGenerator":
-                moduleList.add(new FunctionGenerator(moduleId));
+                if (!deletedIds.isEmpty())
+                    moduleList.add(new FunctionGenerator(deletedIds.remove(0)));
+                else {
+                    moduleList.add(new FunctionGenerator(nextId));
+                    ++nextId;
+                }
                 break;
             default:
                 System.err.println("Module type \"" + moduleType +
