@@ -39,6 +39,7 @@ public class ParallelRenderer {
     {
         synchronized (jobQueue) {
             synchronized (unscheduledJobs) {
+                List<Job> jobsToSchedule = new ArrayList<Job>();
                 for(Job job: unscheduledJobs) {
                     boolean schedule = true;
                     for (Job dependency: job.getDependencies()) {
@@ -47,10 +48,12 @@ public class ParallelRenderer {
                             break;
                         }
                     }
-                    if (schedule) {
-                        jobQueue.add(job);
-                        unscheduledJobs.remove(job);
-                    }
+                    if (schedule)
+                        jobsToSchedule.add(job);
+                }
+                for (Job job: jobsToSchedule) {
+                    jobQueue.add(job);
+                    unscheduledJobs.remove(job);
                 }
             }
         }

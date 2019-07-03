@@ -18,6 +18,8 @@ public class ParallelRendererJobProcessor implements Runnable {
                                job.moduleList.get(0).getName() + " begun!");
             Thread.sleep(10000);
             job.completed = true;
+            System.out.println("Job with module " + 
+                               job.moduleList.get(0).getName() + " complete!");
             boolean renderOut = false;
             boolean allJobsComplete = true;
             for (Job jobListJob: renderer.getJobList()) {
@@ -43,8 +45,7 @@ public class ParallelRendererJobProcessor implements Runnable {
                 }
                 renderer.pollJobQueue();
             }
-            System.out.println("Job with module " + 
-                               job.moduleList.get(0).getName() + " complete!");
+ 
         } catch (InterruptedException e) {
             System.err.println("InterruptedException thrown!");
         }
@@ -52,6 +53,11 @@ public class ParallelRendererJobProcessor implements Runnable {
     
     public void render()
     {
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            System.err.println("InterruptedException thrown!");
+        }
         System.out.println("Mock render completed!");
     }
 
