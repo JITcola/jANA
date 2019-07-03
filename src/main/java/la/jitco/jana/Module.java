@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class Module {
     
     public int id;
-    protected String name = "Module " + id;
+    protected String name;
     private Precision bitDepth = Precision.DOUBLE;
     private BigInteger sampleRate = new BigInteger("44100");
     private BigInteger mpfrBits = new BigInteger("64");
@@ -26,17 +26,10 @@ public class Module {
     protected double weightSampleRateMultiplier = 44100;
     private double weight;
     
-    private static int nextId = 0;
-    private static List<Integer> deletedIds = new ArrayList<Integer>();
-    
-    Module()
+    Module(int id)
     {
-        if (deletedIds.isEmpty()) {
-            id = nextId;
-            ++nextId;
-        } else {
-            id = deletedIds.remove(0);            
-        }
+        this.id = id;
+        name = "Module " + id;
         
         paramMap = new HashMap<String, Parameter>();
         inModMap = new HashMap<String, ModIn>();
@@ -181,24 +174,5 @@ public class Module {
     {
         return modOutArray;
     }
-            
-    public static void main(String[] args)
-    {
-        Module fg1 = new FunctionGenerator();
-        Module fg2 = new FunctionGenerator();
-        Module d1 = new Delay();
-        Module d2 = new Delay();
-        
-        System.out.printf(fg1.getId() + "%n" + fg2.getId() +
-                          "%n" + d1.getId() + "%n" + d2.getId() + "%n");
-        fg1.getOut("mainOut").modulate(fg2.getIn("frequency"));
-        fg2.getOut("auxOut1").modulate(d1.getIn("time"));
-        System.out.printf(fg1.getOut("mainOut").destination.getName() + "%n" +
-                          fg2.getOut("auxOut1").destination.getName() + "%n");
-        fg1.setBitDepth(Precision.MULTIPRECISION, "99");
-        d1.setSampleRate(new BigInteger("384000"));
-        System.out.println(fg1.getWeight());
-        System.out.println(d1.getWeight());
-    }
-    
+
 }

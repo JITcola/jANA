@@ -7,12 +7,14 @@ public class Patch {
     
     private List<Module> moduleList = new ArrayList<Module>();
     private ModOut outToRender;
-    public int renderLength = -1;
+    public int renderLength = 10;
     public SoundFileFormat format = SoundFileFormat.WAV_16_44100;
+    public int nextId = 0;
+    public List<Integer> deletedIds = new ArrayList<Integer>();
     
     Patch()
     {
-        moduleList.add(new FunctionGenerator());
+        addModule("FunctionGenerator");
         outToRender = moduleList.get(0).getOut("mainOut");
     }
     
@@ -23,12 +25,19 @@ public class Patch {
     
     public void addModule(String moduleType)
     {
+        int moduleId;
+        if (!deletedIds.isEmpty())
+            moduleId = deletedIds.remove(0);
+        else {
+            moduleId = nextId;
+            ++nextId;
+        }
         switch (moduleType) {
             case "Delay":
-                moduleList.add(new Delay());
+                moduleList.add(new Delay(moduleId));
                 break;
             case "FunctionGenerator":
-                moduleList.add(new FunctionGenerator());
+                moduleList.add(new FunctionGenerator(moduleId));
                 break;
             default:
                 System.err.println("Module type \"" + moduleType +
@@ -40,6 +49,7 @@ public class Patch {
     {
         if (moduleList.contains(module)) {
             moduleList.remove(module);
+            deletedIds.add(module.getId());
             for (ModOut modOut: module.getModOutArray())
                 modOut.getDestination().reset();
             for (ModIn modIn: module.getModInArray())

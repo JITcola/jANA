@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 public class Delay extends Module {
     
-    Delay()
+    Delay(int id)
     {
-        super();
+        super(id);
         name = "Delay " + id;
         paramArray = new Parameter[] {
                          new PositiveIntegerParameter("initTime"),

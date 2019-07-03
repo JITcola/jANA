@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 public class FunctionGenerator extends Module {
     
-    FunctionGenerator()
+    FunctionGenerator(int id)
     {
-        super();
+        super(id);
         name = "FunctionGenerator " + id;
         paramArray = new Parameter[] {
                          new FloatingPointParameter("baseFrequency"),
