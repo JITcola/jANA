@@ -70,6 +70,11 @@ public class Patch {
             System.err.printf("Patch does not contain parent module of argument to setOut");
     }
     
+    public ModOut getOut()
+    {
+        return outToRender;
+    }
+    
     public static void main(String[] args)
     {
         Patch pg1 = new Patch();

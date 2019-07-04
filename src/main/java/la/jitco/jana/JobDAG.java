@@ -4,16 +4,24 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.HashMap;
 
 public class JobDAG {
     
     List<Job> dag = new ArrayList<Job>();
+    Patch patch;
+    Map<Job, Integer> jobIds = new HashMap<Job, Integer>();
     
-    JobDAG(ModuleGraph moduleGraph)
+    JobDAG(ModuleGraph moduleGraph, Patch patch)
     {
+        this.patch = patch;
         createJobs(moduleGraph);
-        setJobWeights();
         setJobAdjacenciesAndDependencies();
+        filterDependencies(this.patch);
+        setJobWeights();
+        setJobIds();
+        setJobBitDepthsAndSampleRates();
     }
     
     public void createJobs(ModuleGraph moduleGraph)
@@ -62,6 +70,87 @@ public class JobDAG {
                             }
     }
     
+    public void filterDependencies(Patch patch)
+    {
+        Job outJob = null;
+        for (Job job: dag) {
+            if (job.moduleList.contains(patch.getOut().getParent()))
+                outJob = job;
+        }
+        if (outJob == null) {
+            System.err.println("Patch does not have a designated ModOut to render!");
+            return;
+        }
+        Map<Job, Color> jobColors = new HashMap<Job, Color>();
+        for (Job job: dag)
+            jobColors.put(job, Color.WHITE);
+        List<Job> jobsToProcess = new ArrayList<Job>();
+        jobsToProcess.add(outJob);
+        while (!jobsToProcess.isEmpty()) {
+            for (Job job: jobsToProcess.get(0).getDependencies())
+                if (jobColors.get(job) == Color.WHITE)
+                    jobsToProcess.add(job);
+            jobColors.put(jobsToProcess.get(0), Color.BLACK);
+            jobsToProcess.remove(0);
+        }
+        List<Job> jobsToRemove = new ArrayList<Job>();
+        for (Job job: dag)
+            if (jobColors.get(job) != Color.BLACK)
+                jobsToRemove.add(job);
+        for (Job job: jobsToRemove)
+            dag.remove(job);
+        
+        for (Job job: dag) {
+            List<Job> deletedAdjacencies = new ArrayList<Job>();
+            for (Job adjacentJob: job.getAdjacentJobs())
+                if (!dag.contains(adjacentJob))
+                    deletedAdjacencies.add(adjacentJob);
+            for (Job adjacentJob: deletedAdjacencies)
+                job.getAdjacentJobs().remove(adjacentJob);
+        }
+    }
+    
+    public void setJobIds()
+    {
+        int i = 0;
+        for (Job job: dag) {
+            jobIds.put(job, i);
+            ++i;
+        }
+    }
+    
+    public void setJobBitDepthsAndSampleRates()
+    {
+        for (Job job: dag) {
+            Precision jobBitDepth = job.getModuleList().get(0).getBitDepth();
+            BigInteger jobMpfrBits = job.getModuleList().get(0).getMpfrBits();
+            BigInteger jobSampleRate = job.getModuleList().get(0).getSampleRate();
+            for (Module module: job.getModuleList()) {
+                if (jobBitDepth == Precision.DOUBLE && 
+                    module.getBitDepth() == Precision.DOUBLE)
+                    ;
+                if (jobBitDepth == Precision.DOUBLE &&
+                    module.getBitDepth() == Precision.MULTIPRECISION) {
+                    jobBitDepth = module.getBitDepth();
+                    jobMpfrBits = module.getMpfrBits();
+                }
+                if (jobBitDepth == Precision.MULTIPRECISION &&
+                    module.getBitDepth() == Precision.DOUBLE)
+                    ;
+                if (jobBitDepth == Precision.MULTIPRECISION &&
+                    module.getBitDepth() == Precision.MULTIPRECISION) {
+                    if (jobMpfrBits.compareTo(module.getMpfrBits()) < 0)
+                        jobMpfrBits = module.getMpfrBits();
+                }
+                if (jobSampleRate.compareTo(module.getSampleRate()) < 0)
+                    jobSampleRate = module.getSampleRate();
+            }
+            job.bitDepth = jobBitDepth;
+            job.mpfrBits = jobMpfrBits;
+            job.sampleRate = jobSampleRate;
+        }
+    }
+    
     public static void main(String[] args)
     {
         Patch patch = new Patch();
@@ -108,29 +197,20 @@ public class JobDAG {
         patch.getModuleList().get(14).getOut("auxOut1").modulate(patch.getModuleList().get(15).getIn("level"));
         patch.getModuleList().get(15).getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("frequency"));
         
+        patch.setOut(patch.getModuleList().get(0).getOut("mainOut"));
+        
         ModuleGraph mg = new ModuleGraph(patch);
-        JobDAG jobDAG = new JobDAG(mg);
+        JobDAG jobDAG = new JobDAG(mg, patch);
         for (Job job: jobDAG.dag) {
             for (Module module: job.moduleList)
                 System.out.printf("%d ", module.getId());
             System.out.printf("%n");
         }
-        for (Job job: jobDAG.dag)
-            System.out.println(job.weight);
-        System.out.printf("***%n");
         for (Job job: jobDAG.dag) {
-            System.out.println(job.moduleList.get(0).getId());
-            for (Job adjJob: job.adjacentJobs)
-                System.out.println(adjJob.moduleList.get(0).getId());
-            System.out.printf("---%n");
-        }
-        System.out.println(jobDAG.dag.size());
-        System.out.println("---");
-        for (Job job: jobDAG.dag) {
-            if (job.moduleList.contains(patch.getModuleList().get(15))) {
-                for (Job dependencyJob: job.dependencies)
-                    System.out.println(dependencyJob.moduleList.get(0).getId());
-            }
+            System.out.println(job.getModuleList().get(0).getId());
+            System.out.println(job.bitDepth);
+            System.out.println(job.mpfrBits);
+            System.out.println(job.sampleRate);
         }
     }
 

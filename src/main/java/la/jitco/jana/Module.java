@@ -174,5 +174,20 @@ public class Module {
     {
         return modOutArray;
     }
+    
+    public Precision getBitDepth()
+    {
+        return bitDepth;
+    }
+    
+    public BigInteger getSampleRate()
+    {
+        return sampleRate;
+    }
+    
+    public BigInteger getMpfrBits()
+    {
+        return mpfrBits;
+    }
 
 }

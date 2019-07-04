@@ -4,6 +4,7 @@ package la.jitco.jana;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.math.BigInteger;
 
 public class Job {
     
@@ -12,6 +13,9 @@ public class Job {
     public List<Job> dependencies = new ArrayList<Job>();
     public double weight = 0;
     public boolean completed = false;
+    public Precision bitDepth;
+    public BigInteger mpfrBits;
+    public BigInteger sampleRate;
     
     public List<Job> getDependencies()
     {
@@ -21,6 +25,11 @@ public class Job {
     public List<Job> getAdjacentJobs()
     {
         return adjacentJobs;
+    }
+    
+    public List<Module> getModuleList()
+    {
+        return moduleList;
     }
 
 }

@@ -58,7 +58,7 @@ public class ModuleGraph {
         return result;
     }
 
-    public void depthFirstSearch()
+    public void depthFirstSearch() // TODO: rewrite nonrecursively
     {
         for (ModuleGraphNode node: nodeList) {
             node.color = Color.WHITE;

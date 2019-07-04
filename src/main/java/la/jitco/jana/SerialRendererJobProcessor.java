@@ -39,7 +39,7 @@ public class SerialRendererJobProcessor implements Runnable {
     public void render()
     {
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             System.err.println("InterruptedException thrown!");
         }

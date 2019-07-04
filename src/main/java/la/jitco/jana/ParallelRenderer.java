@@ -26,7 +26,7 @@ public class ParallelRenderer {
     {
         this.patch = patch;
         ModuleGraph moduleGraph = new ModuleGraph(this.patch);
-        this.jobDAG = new JobDAG(moduleGraph);
+        this.jobDAG = new JobDAG(moduleGraph, this.patch);
         
         jobList = jobDAG.dag;
         unscheduledJobs = new ArrayList<Job>(jobList);
@@ -136,6 +136,8 @@ public class ParallelRenderer {
         patch.getModuleList().get(8).getOut("auxOut1").modulate(patch.getModuleList().get(15).getIn("phase"));
         patch.getModuleList().get(14).getOut("auxOut1").modulate(patch.getModuleList().get(15).getIn("level"));
         patch.getModuleList().get(15).getOut("mainOut").modulate(patch.getModuleList().get(0).getIn("frequency"));
+        
+        patch.setOut(patch.getModuleList().get(0).getOut("mainOut"));
         
         ParallelRenderer renderer = new ParallelRenderer(patch);
         renderer.processJobs();
