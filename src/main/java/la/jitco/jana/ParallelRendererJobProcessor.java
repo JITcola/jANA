@@ -1,9 +1,19 @@
 package la.jitco.jana;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.ArrayList;
+import java.nio.file.StandardCopyOption;
+import java.io.IOException;
+
 public class ParallelRendererJobProcessor implements Runnable {
     
     public ParallelRenderer renderer;
     public Job job;
+    public String jobDirectoryName = renderer.rendererDirectoryName + "/job" + 
+                                 renderer.jobDAG.jobIds.get(job);
+    public File jobDirectory = new File(jobDirectoryName);
     
     ParallelRendererJobProcessor(ParallelRenderer renderer, Job job)
     {
@@ -13,7 +23,10 @@ public class ParallelRendererJobProcessor implements Runnable {
     
     public void run()
     {
+        gatherDependencies();
+        copyJobFile();
         processJob();
+        deleteTemporaryFiles();
         boolean renderOut = false;
         boolean allJobsComplete = true;
         for (Job jobListJob: renderer.getJobList()) {
@@ -41,6 +54,46 @@ public class ParallelRendererJobProcessor implements Runnable {
         }
     }
     
+    private void gatherDependencies()
+    {
+        jobDirectory.mkdirs();
+        /*
+        List<Integer> modOutDependencyIds = new ArrayList<Integer>();
+        for (ModIO modOut: job.getExternalModOutDependencies())
+            modOutDependencyIds.add(modOut.getId());
+        for (Integer modOutId: modOutDependencyIds) {
+            String sourceFileName = renderer.rendererDirectoryName + "/ModOut" + 
+                                    modOutId + ".dat";
+            File sourceFile = new File(sourceFileName);
+            String destinationFileName = jobDirectoryName + "/ModOut" + 
+                                         modOutId + ".dat";
+            File destinationFile = new File(destinationFileName);
+            try {
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(), 
+                       StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                System.err.println("IOException thrown by gatherDependencies");
+            }
+        }
+        */
+    }
+    
+    private void copyJobFile()
+    {
+        String sourceFileName = renderer.rendererDirectoryName +"/Job" +
+                                renderer.jobDAG.jobIds.get(job) + ".job";
+        File sourceFile = new File(sourceFileName);
+        String destinationFileName = jobDirectoryName + "/Job" + 
+                                     renderer.jobDAG.jobIds.get(job) + ".job";
+        File destinationFile = new File(destinationFileName);
+        try {
+            Files.copy(sourceFile.toPath(), destinationFile.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.err.println("IOException thrown by copyJobFile");
+        }
+    }
+    
     private void processJob()
     {
         try {
@@ -63,6 +116,13 @@ public class ParallelRendererJobProcessor implements Runnable {
             System.err.println("InterruptedException thrown!");
         }
         System.out.println("Mock render completed!");
+    }
+    
+    public void deleteTemporaryFiles()
+    {
+        for (File file: jobDirectory.listFiles())
+            file.delete();
+        jobDirectory.delete();        
     }
 
 }

@@ -1,4 +1,4 @@
-// TODO: finish this
+// TODO: get this to the same level of completion as ParallelRenderer
 
 package la.jitco.jana;
 

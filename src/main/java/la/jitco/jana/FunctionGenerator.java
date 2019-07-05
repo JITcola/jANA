@@ -7,6 +7,7 @@ public class FunctionGenerator extends Module {
     FunctionGenerator(int id)
     {
         super(id);
+        type = ModuleType.FUNCTION_GENERATOR;
         name = "FunctionGenerator " + id;
         paramArray = new Parameter[] {
                          new FloatingPointParameter("baseFrequency"),
@@ -26,6 +27,8 @@ public class FunctionGenerator extends Module {
         createMaps();
         weightTaskMultiplier = 10; // TODO: find actual value
         setWeight();
+        
+        paramArray[3].setValue("1.0");
         }
 
 }

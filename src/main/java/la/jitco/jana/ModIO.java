@@ -32,4 +32,9 @@ abstract public class ModIO {
         this.id = id;
     }
     
+    public Integer getId()
+    {
+        return id;
+    }
+    
 }

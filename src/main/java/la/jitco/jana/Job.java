@@ -5,6 +5,8 @@ package la.jitco.jana;
 import java.util.List;
 import java.util.ArrayList;
 import java.math.BigInteger;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Job {
     
@@ -16,6 +18,12 @@ public class Job {
     public Precision bitDepth;
     public BigInteger mpfrBits;
     public BigInteger sampleRate;
+    public Map<Module, List<ModulationPair>> modInDependencies = 
+            new HashMap<Module, List<ModulationPair>>();
+    public List<ModIO> jobExternalModInDependencies = new ArrayList<ModIO>();
+    public Map<Module, List<ModOut>> moduleDependencyOuts = 
+            new HashMap<Module, List<ModOut>>();
+    public List<ModOut> jobExternalDependencyOuts = new ArrayList<ModOut>();
     
     public List<Job> getDependencies()
     {
@@ -30,6 +38,26 @@ public class Job {
     public List<Module> getModuleList()
     {
         return moduleList;
+    }
+    
+    public Map<Module, List<ModulationPair>> getModInDependencies()
+    {
+        return modInDependencies;
+    }
+    
+    public List<ModIO> getJobExternalModInDependencies()
+    {
+        return jobExternalModInDependencies;
+    }
+    
+    public Map<Module, List<ModOut>> getModuleDependencyOuts()
+    {
+        return moduleDependencyOuts;
+    }
+    
+    public List<ModOut> getJobExternalDependencyOuts()
+    {
+        return jobExternalDependencyOuts;
     }
 
 }

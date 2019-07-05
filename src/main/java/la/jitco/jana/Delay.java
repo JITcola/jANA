@@ -7,6 +7,7 @@ public class Delay extends Module {
     Delay(int id)
     {
         super(id);
+        type = ModuleType.DELAY;
         name = "Delay " + id;
         paramArray = new Parameter[] {
                          new PositiveIntegerParameter("initTime"),

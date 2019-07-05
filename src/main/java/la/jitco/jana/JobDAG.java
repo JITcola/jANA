@@ -23,6 +23,10 @@ public class JobDAG {
         setJobIds();
         setJobBitDepthsAndSampleRates();
         setModIds();
+        computeModuleModInDependencies();
+        computeJobExternalModInDependencies();
+        computeModuleDependencyOuts();
+        computeJobExternalDependencyOuts();
     }
     
     public void createJobs(ModuleGraph moduleGraph)
@@ -165,11 +169,67 @@ public class JobDAG {
                         modIn.setId(-1);
                 }
                 for (ModOut modOut: module.getModOutArray()) {
-                    if (modOut.getDestination() != null) {
+                    if (modOut.getDestination() != null ||
+                            modOut == patch.getOut()) {
                         modOut.setId(nextId);
                         ++nextId;
                     } else
                         modOut.setId(-1);
+                }
+            }
+        }
+    }
+    
+    public void computeModuleModInDependencies()
+    {
+        for (Job job: dag) {
+            for (Module module: job.getModuleList()) {
+                job.getModInDependencies().put(module, new ArrayList<ModulationPair>());
+                for (ModIn modIn: module.getModInArray()) {
+                    if (modIn.getId() != -1) {
+                        job.getModInDependencies().get(module).add(new 
+                            ModulationPair(modIn, modIn.getSource()));
+                    }
+                }
+            }
+        }
+    }
+    
+    public void computeJobExternalModInDependencies()
+    {
+        for (Job job: dag) {
+            for (Module module: job.getModuleList()) {
+                for (ModulationPair modulationPair: job.getModInDependencies().get(module)) {
+                    if (!job.getModuleList().contains(modulationPair.getOut().getParent())) {
+                        job.getJobExternalModInDependencies().add(modulationPair.getOut());
+                    }
+                }
+            }
+        }
+    }
+    
+    public void computeModuleDependencyOuts()
+    {
+        for (Job job: dag) {
+            for (Module module: job.getModuleList()) {
+                job.getModuleDependencyOuts().put(module, new ArrayList<ModOut>());
+                for (ModOut modOut: module.getModOutArray()) {
+                    if (modOut.getId() != -1)
+                        job.getModuleDependencyOuts().get(module).add(modOut);
+                }
+            }
+        }
+    }
+    
+    public void computeJobExternalDependencyOuts()
+    {
+        for (Job job: dag) {
+            for (Module module: job.getModuleList()) {
+                for (ModOut modOut: job.getModuleDependencyOuts().get(module)) {
+                    if (modOut == patch.getOut() || 
+                        !job.getModuleList().contains(modOut.getDestination().getParent())) {
+                        job.getJobExternalDependencyOuts().add(modOut);
+                    }
                 }
             }
         }

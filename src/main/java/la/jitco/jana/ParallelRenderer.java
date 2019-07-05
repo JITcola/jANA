@@ -8,20 +8,22 @@ import java.util.Queue;
 import java.io.File;
 import java.math.BigInteger;
 import java.io.IOException;
+import java.io.FileWriter;
 
 public class ParallelRenderer {
     
     private Patch patch;
-    private JobDAG jobDAG;
+    public JobDAG jobDAG;
     
-    private List<Job> jobList;
+    private final List<Job> jobList;
     private List<Job> jobQueue = new ArrayList<Job>();    
     private Integer maxThreads = Runtime.getRuntime().availableProcessors();
     public Integer currentThreads = 0;
     private List<Job> unscheduledJobs;
     public Boolean jobsProcessed = false;
-    private final String userHome = System.getProperty("user.home");
-    public final File masterDataDirectory = new File(userHome + "/jANA_data");
+    public final String userHome = System.getProperty("user.home");
+    public final String rendererDirectoryName = userHome + "/jANA_data";
+    public final File rendererDirectory = new File(rendererDirectoryName);
     public final File result = new File(userHome + "render.wav");
 
     
@@ -36,7 +38,18 @@ public class ParallelRenderer {
         
     }
     
-    // TODO: write these functions and make sure that they work
+    public void createJobFiles()
+    {
+        for (Job job: jobList) {
+            try {
+                FileWriter jobFile = new FileWriter(rendererDirectoryName + 
+                                     "/Job" + jobDAG.jobIds.get(job) + ".job");
+                
+            } catch (IOException e) {
+                System.err.println("IOException thrown by createJobFiles");
+            }
+        }
+    }
     
     public void schedule()
     {
@@ -85,24 +98,17 @@ public class ParallelRenderer {
     
     public void processJobs()
     {
-        masterDataDirectory.mkdirs();
-        System.out.println(masterDataDirectory.getAbsolutePath());
-        try {
-            new File(userHome + "/jANA_data/file1.dat").createNewFile();
-            new File(userHome + "/jANA_data/file2.dat").createNewFile();
-        } catch (IOException e) {
-            ;
-        }
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            ;
-        }
+        rendererDirectory.mkdirs();
+        createJobFiles();
         schedule();
         pollJobQueue();
-        for (File file: masterDataDirectory.listFiles())
+    }
+    
+    public void deleteTemporaryFiles()
+    {
+        for (File file: rendererDirectory.listFiles())
             file.delete();
-        masterDataDirectory.delete();
+        rendererDirectory.delete();
     }
     
     public List<Job> getJobList()
@@ -160,6 +166,7 @@ public class ParallelRenderer {
         
         ParallelRenderer renderer = new ParallelRenderer(patch);
         renderer.processJobs();
+        renderer.deleteTemporaryFiles();
         
     }
     

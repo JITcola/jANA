@@ -1,3 +1,5 @@
+// TODO: get this to the same level of completion as ParallelRendererJobProcessor
+
 package la.jitco.jana;
 
 public class SerialRendererJobProcessor implements Runnable {

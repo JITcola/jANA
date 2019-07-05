@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class Module {
     
+    public ModuleType type;
     public int id;
     protected String name;
     private Precision bitDepth = Precision.DOUBLE;
@@ -188,6 +189,18 @@ public class Module {
     public BigInteger getMpfrBits()
     {
         return mpfrBits;
+    }
+    
+    public String getType()
+    {
+        if (type == ModuleType.FUNCTION_GENERATOR)
+            return "FunctionGenerator";
+        else if (type == ModuleType.DELAY)
+            return "Delay";
+        else {
+            System.err.println("Invalid module type!");
+            return "INVALID";
+        }
     }
 
 }
