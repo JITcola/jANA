@@ -202,5 +202,10 @@ public class Module {
             return "INVALID";
         }
     }
+    
+    public Parameter[] getParameterArray()
+    {
+        return paramArray;
+    }
 
 }

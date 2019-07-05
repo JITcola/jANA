@@ -1,5 +1,3 @@
-// TODO: finish this
-
 package la.jitco.jana;
 
 import java.util.List;
@@ -44,7 +42,75 @@ public class ParallelRenderer {
             try {
                 FileWriter jobFile = new FileWriter(rendererDirectoryName + 
                                      "/Job" + jobDAG.jobIds.get(job) + ".job");
-                
+                jobFile.write("Job ID: " + jobDAG.jobIds.get(job) + "%n");
+                jobFile.write("Precision: " + 
+                              (new PrecisionClass(job.getBitDepth())).toString() + 
+                              "%n");
+                jobFile.write("Multiprecision bits: " + 
+                              job.getMpfrBits().toString() + "%n");
+                jobFile.write("Sample rate: " + job.getSampleRate().toString() +
+                              "%n");
+                jobFile.write("External ModOut dependencies: ");
+                switch (job.getJobExternalModInDependencies().size()) {
+                    case 0:
+                            jobFile.write("%n");
+                            break;
+                    case 1:
+                            jobFile.write(job.getJobExternalModInDependencies().get(0).getId() +
+                                          "%n");
+                            break;
+                    default:
+                            for (ModOut modOut: job.getJobExternalModInDependencies()) {
+                                if (modOut !=
+                                    job.getJobExternalModInDependencies().get(
+                                    job.getJobExternalModInDependencies().size()-1))
+                                    jobFile.write(modOut.getId() + ", ");
+                                else
+                                    jobFile.write(modOut.getId() + "%n");
+                            }
+                            break;
+                }
+                jobFile.write("External ModIn dependencies: ");
+                switch(job.getJobExternalDependencyOuts().size()) {
+                    case 0:
+                            jobFile.write("%n");
+                            break;
+                    case 1:
+                            jobFile.write(job.getJobExternalDependencyOuts().get(0).getId() +
+                                          "%n");
+                            break;
+                    default:
+                             for (ModOut modOut: job.getJobExternalDependencyOuts()) {
+                                 if (modOut !=
+                                     job.getJobExternalDependencyOuts().get(
+                                     job.getJobExternalDependencyOuts().size() - 1))
+                                     jobFile.write(modOut.getId() + ", ");
+                                 else
+                                     jobFile.write(modOut.getId() + "%n");
+                             }
+                             break;
+                }
+                for (Module module: job.getModuleList()) {
+                    jobFile.write("Module:%n");
+                    jobFile.write("Module type: " + module.getType() + "%n");
+                    jobFile.write("Parameters:%n");
+                    for (Parameter param: module.getParameterArray())
+                        jobFile.write(param.getName() + ": " + param.getValue() +
+                                      "%n");
+                    jobFile.write("Dependent ModIns:%n");
+                    for (ModulationPair modulationPair: job.getModInDependencies().get(module)) {
+                        jobFile.write(modulationPair.getIn().getName() + ", " +
+                                      modulationPair.getIn().getId() + "; " +
+                                      modulationPair.getOut().getId() + "%n");
+                    }
+                    jobFile.write("Dependency ModOuts:%n");
+                    for (ModulationPair modulationPair: job.getModuleDependencyOuts().get(module)) {
+                        jobFile.write(modulationPair.getOut().getName() + ", " + 
+                                      modulationPair.getOut().getId() + "; " +
+                                      modulationPair.getIn().getId() + "%n");
+                    }
+                }
+                jobFile.close();
             } catch (IOException e) {
                 System.err.println("IOException thrown by createJobFiles");
             }
@@ -98,6 +164,7 @@ public class ParallelRenderer {
     
     public void processJobs()
     {
+        deleteRendererDirectory();
         rendererDirectory.mkdirs();
         createJobFiles();
         schedule();
@@ -105,6 +172,13 @@ public class ParallelRenderer {
     }
     
     public void deleteTemporaryFiles()
+    {
+        for (File file: rendererDirectory.listFiles())
+            if (!(file.getName().endsWith("wav")))
+                file.delete();
+    }
+    
+    public void deleteRendererDirectory()
     {
         for (File file: rendererDirectory.listFiles())
             file.delete();

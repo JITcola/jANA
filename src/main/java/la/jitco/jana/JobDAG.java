@@ -212,10 +212,11 @@ public class JobDAG {
     {
         for (Job job: dag) {
             for (Module module: job.getModuleList()) {
-                job.getModuleDependencyOuts().put(module, new ArrayList<ModOut>());
+                job.getModuleDependencyOuts().put(module, new ArrayList<ModulationPair>());
                 for (ModOut modOut: module.getModOutArray()) {
                     if (modOut.getId() != -1)
-                        job.getModuleDependencyOuts().get(module).add(modOut);
+                        job.getModuleDependencyOuts().get(module).add(new 
+                            ModulationPair(modOut.getDestination(), modOut));
                 }
             }
         }
@@ -225,10 +226,10 @@ public class JobDAG {
     {
         for (Job job: dag) {
             for (Module module: job.getModuleList()) {
-                for (ModOut modOut: job.getModuleDependencyOuts().get(module)) {
-                    if (modOut == patch.getOut() || 
-                        !job.getModuleList().contains(modOut.getDestination().getParent())) {
-                        job.getJobExternalDependencyOuts().add(modOut);
+                for (ModulationPair modulationPair: job.getModuleDependencyOuts().get(module)) {
+                    if (modulationPair.getOut() == patch.getOut() || 
+                        !job.getModuleList().contains(modulationPair.getOut().getDestination().getParent())) {
+                        job.getJobExternalDependencyOuts().add(modulationPair.getOut());
                     }
                 }
             }

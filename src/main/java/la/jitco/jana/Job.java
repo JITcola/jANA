@@ -20,9 +20,9 @@ public class Job {
     public BigInteger sampleRate;
     public Map<Module, List<ModulationPair>> modInDependencies = 
             new HashMap<Module, List<ModulationPair>>();
-    public List<ModIO> jobExternalModInDependencies = new ArrayList<ModIO>();
-    public Map<Module, List<ModOut>> moduleDependencyOuts = 
-            new HashMap<Module, List<ModOut>>();
+    public List<ModOut> jobExternalModInDependencies = new ArrayList<ModOut>();
+    public Map<Module, List<ModulationPair>> moduleDependencyOuts = 
+            new HashMap<Module, List<ModulationPair>>();
     public List<ModOut> jobExternalDependencyOuts = new ArrayList<ModOut>();
     
     public List<Job> getDependencies()
@@ -45,12 +45,12 @@ public class Job {
         return modInDependencies;
     }
     
-    public List<ModIO> getJobExternalModInDependencies()
+    public List<ModOut> getJobExternalModInDependencies()
     {
         return jobExternalModInDependencies;
     }
     
-    public Map<Module, List<ModOut>> getModuleDependencyOuts()
+    public Map<Module, List<ModulationPair>> getModuleDependencyOuts()
     {
         return moduleDependencyOuts;
     }
@@ -58,6 +58,21 @@ public class Job {
     public List<ModOut> getJobExternalDependencyOuts()
     {
         return jobExternalDependencyOuts;
+    }
+    
+    public Precision getBitDepth()
+    {
+        return bitDepth;
+    }
+    
+    public BigInteger getMpfrBits()
+    {
+        return mpfrBits;
+    }
+    
+    public BigInteger getSampleRate()
+    {
+        return sampleRate;
     }
 
 }

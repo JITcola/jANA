@@ -43,8 +43,10 @@ public class ParallelRendererJobProcessor implements Runnable {
                 }
             }
         }
-        if (renderOut)
+        if (renderOut) {
             render();
+            renderer.deleteTemporaryFiles();
+        }
         else {
             renderer.schedule();
             synchronized (renderer.currentThreads) {
