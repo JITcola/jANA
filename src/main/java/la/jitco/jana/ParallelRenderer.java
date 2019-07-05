@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Queue;
 import java.io.File;
 import java.math.BigInteger;
+import java.io.IOException;
 
 public class ParallelRenderer {
     
@@ -19,7 +20,9 @@ public class ParallelRenderer {
     public Integer currentThreads = 0;
     private List<Job> unscheduledJobs;
     public Boolean jobsProcessed = false;
-    private File result;
+    private final String userHome = System.getProperty("user.home");
+    public final File masterDataDirectory = new File(userHome + "/jANA_data");
+    public final File result = new File(userHome + "render.wav");
 
     
     ParallelRenderer(Patch patch)
@@ -82,8 +85,24 @@ public class ParallelRenderer {
     
     public void processJobs()
     {
+        masterDataDirectory.mkdirs();
+        System.out.println(masterDataDirectory.getAbsolutePath());
+        try {
+            new File(userHome + "/jANA_data/file1.dat").createNewFile();
+            new File(userHome + "/jANA_data/file2.dat").createNewFile();
+        } catch (IOException e) {
+            ;
+        }
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            ;
+        }
         schedule();
         pollJobQueue();
+        for (File file: masterDataDirectory.listFiles())
+            file.delete();
+        masterDataDirectory.delete();
     }
     
     public List<Job> getJobList()
