@@ -22,6 +22,7 @@ public class JobDAG {
         setJobWeights();
         setJobIds();
         setJobBitDepthsAndSampleRates();
+        setModIds();
     }
     
     public void createJobs(ModuleGraph moduleGraph)
@@ -148,6 +149,29 @@ public class JobDAG {
             job.bitDepth = jobBitDepth;
             job.mpfrBits = jobMpfrBits;
             job.sampleRate = jobSampleRate;
+        }
+    }
+    
+    public void setModIds()
+    {
+        int nextId = 0;
+        for (Job job: dag) {
+            for (Module module: job.getModuleList()) {
+                for (ModIn modIn: module.getModInArray()) {
+                    if (modIn.getSource() != null) {
+                        modIn.setId(nextId);
+                        ++nextId;
+                    } else
+                        modIn.setId(-1);
+                }
+                for (ModOut modOut: module.getModOutArray()) {
+                    if (modOut.getDestination() != null) {
+                        modOut.setId(nextId);
+                        ++nextId;
+                    } else
+                        modOut.setId(-1);
+                }
+            }
         }
     }
     

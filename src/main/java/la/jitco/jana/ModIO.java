@@ -4,6 +4,7 @@ abstract public class ModIO {
     
     private final Module parent;
     protected final String name;
+    public Integer id = -1;
     
     ModIO(Module parent, String name)
     {
@@ -24,6 +25,11 @@ abstract public class ModIO {
     public String getName()
     {
         return name;
+    }
+    
+    public void setId(int id)
+    {
+        this.id = id;
     }
     
 }
