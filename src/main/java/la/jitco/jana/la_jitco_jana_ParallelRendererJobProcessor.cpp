@@ -4,5 +4,5 @@
 JNIEXPORT void JNICALL Java_la_jitco_jana_ParallelRendererJobProcessor_computeExternalDependencyOuts
   (JNIEnv *, jobject)
 {
-    std::cout << "Did it work?\n";
+    std::cout << "Another string\n";
 }
