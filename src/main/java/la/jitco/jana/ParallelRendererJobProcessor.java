@@ -17,6 +17,10 @@ public class ParallelRendererJobProcessor implements Runnable {
     public File jobDirectory;
     public File jobFile;
     
+    static {
+        System.loadLibrary("native");
+    }
+    
     ParallelRendererJobProcessor(ParallelRenderer renderer, Job job)
     {
         this.renderer = renderer;
@@ -114,8 +118,11 @@ public class ParallelRendererJobProcessor implements Runnable {
         }
     }
     
+    private native void computeExternalDependencyOuts();
+    
     private void processJob()
     {
+        computeExternalDependencyOuts();
         try{
             List<String> externalModInDependencies = new ArrayList<String>();
             BufferedReader jobFileReader = Files.newBufferedReader(jobFile.toPath(),
