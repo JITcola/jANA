@@ -16,7 +16,7 @@ public class ParallelRenderer {
     public JobDAG jobDAG;
     
     private final List<Job> jobList;
-    private List<Job> jobQueue = new ArrayList<Job>();    
+    public List<Job> jobQueue = new ArrayList<Job>();    
     private Integer maxThreads = Runtime.getRuntime().availableProcessors();
     public Integer currentThreads = 0;
     private List<Job> unscheduledJobs;
@@ -24,7 +24,9 @@ public class ParallelRenderer {
     public final String userHome = System.getProperty("user.home");
     public final String rendererDirectoryName = userHome + "/jANA_data";
     public final File rendererDirectory = new File(rendererDirectoryName);
-    public final File result = new File(userHome + "render.wav");
+    public final String renderDirectoryName = userHome + "/render";
+    public final File renderDirectory = new File(renderDirectoryName);
+    public final File result = new File(renderDirectoryName + "/render.wav");
 
     
     ParallelRenderer(Patch patch)
@@ -45,22 +47,22 @@ public class ParallelRenderer {
                 PrintWriter jobFileWriter = new PrintWriter(new BufferedWriter(new 
                                       FileWriter(rendererDirectoryName + "/Job" + 
                                       jobDAG.jobIds.get(job) + ".job")));
-                jobFileWriter.write("Job ID: " + jobDAG.jobIds.get(job) + "%n");
+                jobFileWriter.write("Job ID: " + jobDAG.jobIds.get(job) + "\n");
                 jobFileWriter.write("Precision: " + 
                               (new PrecisionClass(job.getBitDepth())).toString() + 
-                              "%n");
+                              "\n");
                 jobFileWriter.write("Multiprecision bits: " + 
-                              job.getMpfrBits().toString() + "%n");
+                              job.getMpfrBits().toString() + "\n");
                 jobFileWriter.write("Sample rate: " + job.getSampleRate().toString() +
-                              "%n");
+                              "\n");
                 jobFileWriter.write("External ModOut dependencies: ");
                 switch (job.getJobExternalModInDependencies().size()) {
                     case 0:
-                            jobFileWriter.write("%n");
+                            jobFileWriter.write("\n");
                             break;
                     case 1:
                             jobFileWriter.write(job.getJobExternalModInDependencies().get(0).getId() +
-                                          "%n");
+                                          "\n");
                             break;
                     default:
                             for (ModOut modOut: job.getJobExternalModInDependencies()) {
@@ -69,18 +71,18 @@ public class ParallelRenderer {
                                     job.getJobExternalModInDependencies().size()-1))
                                     jobFileWriter.write(modOut.getId() + ", ");
                                 else
-                                    jobFileWriter.write(modOut.getId() + "%n");
+                                    jobFileWriter.write(modOut.getId() + "\n");
                             }
                             break;
                 }
                 jobFileWriter.write("External ModIn dependencies: ");
                 switch(job.getJobExternalDependencyOuts().size()) {
                     case 0:
-                            jobFileWriter.write("%n");
+                            jobFileWriter.write("\n");
                             break;
                     case 1:
                             jobFileWriter.write(job.getJobExternalDependencyOuts().get(0).getId() +
-                                          "%n");
+                                          "\n");
                             break;
                     default:
                              for (ModOut modOut: job.getJobExternalDependencyOuts()) {
@@ -89,33 +91,34 @@ public class ParallelRenderer {
                                      job.getJobExternalDependencyOuts().size() - 1))
                                      jobFileWriter.write(modOut.getId() + ", ");
                                  else
-                                     jobFileWriter.write(modOut.getId() + "%n");
+                                     jobFileWriter.write(modOut.getId() + "\n");
                              }
                              break;
                 }
                 for (Module module: job.getModuleList()) {
-                    jobFileWriter.write("Module:%n");
-                    jobFileWriter.write("Module type: " + module.getType() + "%n");
-                    jobFileWriter.write("Parameters:%n");
+                    jobFileWriter.write("Module:\n");
+                    jobFileWriter.write("Module type: " + module.getType() + "\n");
+                    jobFileWriter.write("Parameters:\n");
                     for (Parameter param: module.getParameterArray())
                         jobFileWriter.write(param.getName() + ": " + param.getValue() +
-                                      "%n");
-                    jobFileWriter.write("Dependent ModIns:%n");
+                                      "\n");
+                    jobFileWriter.write("Dependent ModIns:\n");
                     for (ModulationPair modulationPair: job.getModInDependencies().get(module)) {
-                        jobFileWriter.write(modulationPair.getIn().getName() + ", " +
+                        jobFileWriter.write(modulationPair.getIn().getName() + ": " +
                                       modulationPair.getIn().getId() + "; " +
-                                      modulationPair.getOut().getId() + "%n");
+                                      modulationPair.getOut().getId() + "\n");
                     }
-                    jobFileWriter.write("Dependency ModOuts:%n");
+                    jobFileWriter.write("Dependency ModOuts:\n");
                     for (ModulationPair modulationPair: job.getModuleDependencyOuts().get(module)) {
-                        jobFileWriter.write(modulationPair.getOut().getName() + ", " + 
-                                      modulationPair.getOut().getId() + "; " +
-                                      modulationPair.getIn().getId() + "%n");
+                        if (modulationPair.getOut() != patch.getOut())
+                            jobFileWriter.write(modulationPair.getOut().getName() + ": " + 
+                                                modulationPair.getOut().getId() + "; " +
+                                                modulationPair.getIn().getId() + "\n");
                     }
                 }
                 jobFileWriter.close();
-            } catch (IOException e) {
-                System.err.println("IOException thrown by createJobFiles");
+            } catch (Exception e) {
+                System.err.println("Exception thrown by createJobFiles");
             }
         }
     }
@@ -167,6 +170,7 @@ public class ParallelRenderer {
     
     public void processJobs()
     {
+        deleteRenderDirectory();
         rendererDirectory.mkdirs();
         createJobFiles();
         schedule();
@@ -180,6 +184,15 @@ public class ParallelRenderer {
         rendererDirectory.delete();
     }
     
+    public void deleteRenderDirectory()
+    {
+        if (renderDirectory.exists()) {
+            for (File file: renderDirectory.listFiles())
+                file.delete();
+            renderDirectory.delete();
+        }
+    }
+    
     public List<Job> getJobList()
     {
         return jobList;
@@ -188,10 +201,13 @@ public class ParallelRenderer {
     public void render()
     {
         try {
+            renderDirectory.mkdirs();
             result.createNewFile();
             deleteRendererDirectory();
         } catch (IOException e) {
-            System.err.println("IOException thrown by method render");
+            System.err.println(e.getMessage());
+        } catch (SecurityException e) {
+            System.err.println("SecurityException thrown by method render");
         }
     }
     

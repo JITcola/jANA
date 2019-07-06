@@ -53,8 +53,7 @@ public class ParallelRendererJobProcessor implements Runnable {
         }
         if (renderOut) {
             renderer.render();
-        }
-        else {
+        } else {
             renderer.schedule();
             synchronized (renderer.currentThreads) {
                 --renderer.currentThreads;
@@ -75,8 +74,8 @@ public class ParallelRendererJobProcessor implements Runnable {
         try {
             Files.copy(sourceFile.toPath(), destinationFile.toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            System.err.println("IOException thrown by method copyJobFile");
+        } catch (Exception e) {
+            System.err.println("Exception thrown by method copyJobFile");
         }
     }
     
@@ -110,8 +109,8 @@ public class ParallelRendererJobProcessor implements Runnable {
                 Files.copy(sourceFile.toPath(), destinationFile.toPath(),
                            StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (IOException e) {
-            System.err.println("IOException thrown by method gatherDependencies");
+        } catch (Exception e) {
+            System.err.println("Exception thrown by method gatherDependencies");
         }
     }
     
@@ -141,8 +140,9 @@ public class ParallelRendererJobProcessor implements Runnable {
                 File modOutFile = new File(modOutFileName);
                 modOutFile.createNewFile();
             }
-        } catch (IOException e) {
-            System.err.println("IOException thrown by method processJob");
+            job.completed = true;
+        } catch (Exception e) {
+            System.err.println("Exception thrown by method processJob");
         }
     }
     
@@ -176,8 +176,8 @@ public class ParallelRendererJobProcessor implements Runnable {
                 Files.copy(sourceFile.toPath(), destinationFile.toPath(),
                         StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (IOException e) {
-            System.err.println("IOException thrown by method processJob");
+        } catch (Exception e) {
+            System.err.println("Exception thrown by method processJob");
         }
     }
     
