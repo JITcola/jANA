@@ -167,18 +167,10 @@ public class ParallelRenderer {
     
     public void processJobs()
     {
-        deleteRendererDirectory();
         rendererDirectory.mkdirs();
         createJobFiles();
         schedule();
         pollJobQueue();
-    }
-    
-    public void deleteTemporaryFiles()
-    {
-        for (File file: rendererDirectory.listFiles())
-            if (!(file.getName().endsWith("wav")))
-                file.delete();
     }
     
     public void deleteRendererDirectory()
@@ -191,6 +183,16 @@ public class ParallelRenderer {
     public List<Job> getJobList()
     {
         return jobList;
+    }
+    
+    public void render()
+    {
+        try {
+            result.createNewFile();
+            deleteRendererDirectory();
+        } catch (IOException e) {
+            System.err.println("IOException thrown by method render");
+        }
     }
     
     public static void main(String[] args)
@@ -243,7 +245,6 @@ public class ParallelRenderer {
         
         ParallelRenderer renderer = new ParallelRenderer(patch);
         renderer.processJobs();
-        renderer.deleteTemporaryFiles();
         
     }
     

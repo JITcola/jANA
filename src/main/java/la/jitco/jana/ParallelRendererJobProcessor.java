@@ -33,7 +33,8 @@ public class ParallelRendererJobProcessor implements Runnable {
         copyJobFile();
         gatherDependencies();
         processJob();
-        deleteTemporaryFiles();
+        exportDependencyOuts();
+        deleteJobDirectory();
         boolean renderOut = false;
         boolean allJobsComplete = true;
         for (Job jobListJob: renderer.getJobList()) {
@@ -51,8 +52,7 @@ public class ParallelRendererJobProcessor implements Runnable {
             }
         }
         if (renderOut) {
-            render();
-            renderer.deleteTemporaryFiles();
+            renderer.render();
         }
         else {
             renderer.schedule();
@@ -117,29 +117,71 @@ public class ParallelRendererJobProcessor implements Runnable {
     
     private void processJob()
     {
-        try {
-            System.out.println("Job with module " + 
-                               job.moduleList.get(0).getName() + " begun!");
-            Thread.sleep(5000);
-            job.completed = true;
-            System.out.println("Job with module " + 
-                               job.moduleList.get(0).getName() + " complete!");
-        } catch (InterruptedException e) {
-            System.err.println("InterruptedException thrown!");
+        try{
+            List<String> externalModInDependencies = new ArrayList<String>();
+            BufferedReader jobFileReader = Files.newBufferedReader(jobFile.toPath(),
+                                            Charset.forName("US-ASCII"));
+            String currentLine = null;
+            while ((currentLine = jobFileReader.readLine()) != null)
+                if (currentLine.startsWith("External ModIn dependencies: "))
+                    break;
+            int indexOfColon = currentLine.indexOf(":");
+            currentLine = currentLine.substring(indexOfColon + 1);
+            currentLine = currentLine.trim();
+            if (!currentLine.equals("")) {
+                String[] modOutIds = currentLine.split(",");
+                for (String modOutId: modOutIds) {
+                    modOutId = modOutId.trim();
+                    externalModInDependencies.add(modOutId);
+                }
+            }
+            for (String modOutId: externalModInDependencies) {
+                String modOutFileName = jobDirectoryName + 
+                                        "/ModOut" + modOutId + ".dat";
+                File modOutFile = new File(modOutFileName);
+                modOutFile.createNewFile();
+            }
+        } catch (IOException e) {
+            System.err.println("IOException thrown by method processJob");
         }
     }
     
-    public void render()
+    public void exportDependencyOuts()
     {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            System.err.println("InterruptedException thrown!");
+        try{
+            List<String> externalModInDependencies = new ArrayList<String>();
+            BufferedReader jobFileReader = Files.newBufferedReader(jobFile.toPath(),
+                                            Charset.forName("US-ASCII"));
+            String currentLine = null;
+            while ((currentLine = jobFileReader.readLine()) != null)
+                if (currentLine.startsWith("External ModIn dependencies: "))
+                    break;
+            int indexOfColon = currentLine.indexOf(":");
+            currentLine = currentLine.substring(indexOfColon + 1);
+            currentLine = currentLine.trim();
+            if (!currentLine.equals("")) {
+                String[] modOutIds = currentLine.split(",");
+                for (String modOutId: modOutIds) {
+                    modOutId = modOutId.trim();
+                    externalModInDependencies.add(modOutId);
+                }
+            }
+            for (String modOutId: externalModInDependencies) {
+                String sourceFileName = jobDirectoryName + 
+                                        "/ModOut" + modOutId + ".dat";
+                File sourceFile = new File(sourceFileName);
+                String destinationFileName = renderer.rendererDirectoryName +
+                                             "/ModOut" + modOutId + ".dat";
+                File destinationFile = new File(destinationFileName);
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(),
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            System.err.println("IOException thrown by method processJob");
         }
-        System.out.println("Mock render completed!");
     }
     
-    public void deleteTemporaryFiles()
+    public void deleteJobDirectory()
     {
         for (File file: jobDirectory.listFiles())
             file.delete();
