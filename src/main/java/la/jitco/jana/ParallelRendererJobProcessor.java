@@ -6,25 +6,32 @@ import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.StandardCopyOption;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.nio.charset.Charset;
 
 public class ParallelRendererJobProcessor implements Runnable {
     
     public ParallelRenderer renderer;
     public Job job;
-    public String jobDirectoryName = renderer.rendererDirectoryName + "/job" + 
-                                 renderer.jobDAG.jobIds.get(job);
-    public File jobDirectory = new File(jobDirectoryName);
+    public String jobDirectoryName;
+    public File jobDirectory;
+    public File jobFile;
     
     ParallelRendererJobProcessor(ParallelRenderer renderer, Job job)
     {
         this.renderer = renderer;
         this.job = job;
+        jobDirectoryName = renderer.rendererDirectoryName + "/Job" +
+                           renderer.jobDAG.jobIds.get(job);
+        jobDirectory = new File(jobDirectoryName);
+        jobFile = new File(jobDirectoryName + "/Job" + 
+                           renderer.jobDAG.jobIds.get(job) + ".job");
     }
     
     public void run()
     {
-        gatherDependencies();
         copyJobFile();
+        gatherDependencies();
         processJob();
         deleteTemporaryFiles();
         boolean renderOut = false;
@@ -56,32 +63,9 @@ public class ParallelRendererJobProcessor implements Runnable {
         }
     }
     
-    private void gatherDependencies()
-    {
-        jobDirectory.mkdirs();
-        /*
-        List<Integer> modOutDependencyIds = new ArrayList<Integer>();
-        for (ModIO modOut: job.getExternalModOutDependencies())
-            modOutDependencyIds.add(modOut.getId());
-        for (Integer modOutId: modOutDependencyIds) {
-            String sourceFileName = renderer.rendererDirectoryName + "/ModOut" + 
-                                    modOutId + ".dat";
-            File sourceFile = new File(sourceFileName);
-            String destinationFileName = jobDirectoryName + "/ModOut" + 
-                                         modOutId + ".dat";
-            File destinationFile = new File(destinationFileName);
-            try {
-                Files.copy(sourceFile.toPath(), destinationFile.toPath(), 
-                       StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                System.err.println("IOException thrown by gatherDependencies");
-            }
-        }
-        */
-    }
-    
     private void copyJobFile()
     {
+        jobDirectory.mkdirs();
         String sourceFileName = renderer.rendererDirectoryName +"/Job" +
                                 renderer.jobDAG.jobIds.get(job) + ".job";
         File sourceFile = new File(sourceFileName);
@@ -92,7 +76,42 @@ public class ParallelRendererJobProcessor implements Runnable {
             Files.copy(sourceFile.toPath(), destinationFile.toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            System.err.println("IOException thrown by copyJobFile");
+            System.err.println("IOException thrown by method copyJobFile");
+        }
+    }
+    
+    private void gatherDependencies()
+    {
+        try {
+            List<String> externalModOutDependencies = new ArrayList<String>();
+            BufferedReader jobFileReader = Files.newBufferedReader(jobFile.toPath(), 
+                                           Charset.forName("US-ASCII"));
+            String currentLine = null;
+            while ((currentLine = jobFileReader.readLine()) != null)
+                if (currentLine.startsWith("External ModOut dependencies: "))
+                    break;
+            int indexOfColon = currentLine.indexOf(":");
+            currentLine = currentLine.substring(indexOfColon + 1);
+            currentLine = currentLine.trim();
+            if (!currentLine.equals("")) {
+                String[] modOutIds = currentLine.split(",");
+                for (String modOutId: modOutIds) {
+                    modOutId = modOutId.trim();
+                    externalModOutDependencies.add(modOutId);
+                }
+            }
+            for (String modOutId: externalModOutDependencies) {
+                String sourceFileName = renderer.rendererDirectoryName +
+                                        "/ModOut" + modOutId + ".dat";
+                File sourceFile = new File(sourceFileName);
+                String destinationFileName = jobDirectoryName + "/ModOut" +
+                                         modOutId + ".dat";
+                File destinationFile = new File(destinationFileName);
+                Files.copy(sourceFile.toPath(), destinationFile.toPath(),
+                           StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            System.err.println("IOException thrown by method gatherDependencies");
         }
     }
     
