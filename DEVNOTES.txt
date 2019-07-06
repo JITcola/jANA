@@ -30,3 +30,13 @@ Spark and Hadoop are too complicated to do the distributed computation I want to
 Current code requires creation/deletion of a class extending Module and
     creation/deletion of a case for the addModule method of Patch when 
     creating or removing a type of Module from the program.
+
+***
+
+Commands for making JNI work:
+
+g++-9 -shared -fPIC -O3 -I/usr/lib/jvm/java-12-openjdk-amd64/include -I/usr/lib/jvm/java-12-openjdk-amd64/include/linux la_*.cpp -o libnative.so
+
+javac ./la/jitco/jana/*.java -h .
+
+java -cp . -Djava.library.path=./la/jitco/jana la.jitco.jana.ParallelRenderer
