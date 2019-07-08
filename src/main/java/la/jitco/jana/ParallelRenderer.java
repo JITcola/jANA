@@ -55,6 +55,7 @@ public class ParallelRenderer {
                               job.getMpfrBits().toString() + "\n");
                 jobFileWriter.write("Sample rate: " + job.getSampleRate().toString() +
                               "\n");
+                jobFileWriter.write("Length: " + patch.renderLength + "\n");
                 jobFileWriter.write("External ModOut dependencies: ");
                 switch (job.getJobExternalModInDependencies().size()) {
                     case 0:
