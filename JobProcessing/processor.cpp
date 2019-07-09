@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <map>
 
 #include <cstdio>
 #include <gmp.h>
@@ -28,10 +29,13 @@ void processJob(int jobId)
     int id {jobId};
     bool doublePrecision;
     int multiprecisionBits;
-    int sampleRate;
-    int length;
+    long int sampleRate;
+    long int length;
     std::vector<int> externalModOutDependencies;
     std::vector<int> externalModInDependencies;
+    
+    std::map<int,std::vector<double>> modIoMapDouble;
+    std::map<int, std::vector<mpfr_t>> modIoMapMulti;
 
     std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
     
@@ -46,10 +50,11 @@ void processJob(int jobId)
     multiprecisionBits = std::stoi(data);
     getline(jobFile, currentLine);
     data = stripDataLabel(currentLine);
-    sampleRate = std::stoi(data);
+    sampleRate = static_cast<long int>(std::stoi(data));
     getline(jobFile, currentLine);
     data = stripDataLabel(currentLine);
-    length = std::stoi(data);
+    length = static_cast<long int>(std::stoi(data));
+    const long int numSamples = length * sampleRate;
     getline(jobFile, currentLine);
     data = stripDataLabel(currentLine);
     if (data != " ") {
@@ -92,6 +97,11 @@ void processJob(int jobId)
     for (int modId: externalModInDependencies)
         std::cout << modId << " ";
     std::cout << "\n";
+    
+    std::vector<double> doubleVec;
+    std::vector<mpfr_t> mpfrVec;
+    std::cout << "doubleVec max size: " << doubleVec.max_size() << "\n"
+              << "mpfrVec max size: " << mpfrVec.max_size() << "\n";
 }
 
 std::string stripDataLabel(std::string line)
@@ -99,7 +109,12 @@ std::string stripDataLabel(std::string line)
     return line.substr(line.find(": ") + static_cast<std::string::size_type>(1));
 }
 
-class FunctionGenerator_Double {
+class Module {
+public:
+    virtual void computeSample(long int sampleIndex);
+};
+
+class FunctionGenerator_Double : Module {
 public:
     double baseFrequency;
     int function;
@@ -108,14 +123,30 @@ public:
     std::vector<double> *frequency = NULL;
     std::vector<double> *phase = NULL;
     std::vector<double> *level = NULL;
-    std::vector<double> mainOut;
-    std::vector<double> auxOut1;
-    std::vector<double> auxOut2;
-    std::vector<double> auxOut3;
-    std::vector<double> auxOut4;
+    std::vector<double> *mainOut = NULL;
+    std::vector<double> *auxOut1 = NULL;
+    std::vector<double> *auxOut2 = NULL;
+    std::vector<double> *auxOut3 = NULL;
+    std::vector<double> *auxOut4 = NULL;
 };
 
-class Delay_Double {
+class FunctionGenerator_Multi : Module {
+public:
+    mpfr_t baseFrequency;
+    int function;
+    mpfr_t initPhase;
+    mpfr_t initLevel;
+    std::vector<mpfr_t> *frequency = NULL;
+    std::vector<mpfr_t> *phase = NULL;
+    std::vector<mpfr_t> *level = NULL;
+    std::vector<mpfr_t> *mainOut = NULL;
+    std::vector<mpfr_t> *auxOut1 = NULL;
+    std::vector<mpfr_t> *auxOut2 = NULL;
+    std::vector<mpfr_t> *auxOut3 = NULL;
+    std::vector<mpfr_t> *auxOut4 = NULL;
+};
+
+class Delay_Double : Module {
 public:
     double initTime;
     double initFeedback;
@@ -124,6 +155,18 @@ public:
     std::vector<double> *time = NULL;
     std::vector<double> *feedback = NULL;
     std::vector<double> *level = NULL;
-    std::vector<double> mainOut;
+    std::vector<double> *mainOut = NULL;
+};
+
+class Delay_Multi : Module {
+public:
+    mpfr_t initTime;
+    mpfr_t initFeedback;
+    mpfr_t initLevel;
+    std::vector<mpfr_t> *input = NULL;
+    std::vector<mpfr_t> *time = NULL;
+    std::vector<mpfr_t> *feedback = NULL;
+    std::vector<mpfr_t> *level = NULL;
+    std::vector<mpfr_t> *mainOut = NULL;
 };
     
