@@ -5,13 +5,17 @@
 #include <fstream>
 #include <string>
 
+#include <cstdio>
+#include <gmp.h>
+#include <mpfr.h>
+
 void processJob(int jobId);
 
 std::string stripDataLabel(std::string line);
 
 int main(void)
 {
-    processJob(2);
+    processJob(5);
     return 0;
 }
 
@@ -113,5 +117,13 @@ public:
 
 class Delay_Double {
 public:
-    
+    double initTime;
+    double initFeedback;
+    double initLevel;
+    std::vector<double> *input = NULL;
+    std::vector<double> *time = NULL;
+    std::vector<double> *feedback = NULL;
+    std::vector<double> *level = NULL;
+    std::vector<double> mainOut;
+};
     
