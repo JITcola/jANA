@@ -94,3 +94,24 @@ std::string stripDataLabel(std::string line)
 {
     return line.substr(line.find(": ") + static_cast<std::string::size_type>(1));
 }
+
+class FunctionGenerator_Double {
+public:
+    double baseFrequency;
+    int function;
+    double initPhase;
+    double initLevel;
+    std::vector<double> *frequency = NULL;
+    std::vector<double> *phase = NULL;
+    std::vector<double> *level = NULL;
+    std::vector<double> mainOut;
+    std::vector<double> auxOut1;
+    std::vector<double> auxOut2;
+    std::vector<double> auxOut3;
+    std::vector<double> auxOut4;
+};
+
+class Delay_Double {
+public:
+    
+    
