@@ -26,5 +26,12 @@ public class NonnegativeFloatingPointParameter extends Parameter {
             return true;
         return false;
     }
+    
+    public static void main(String[] args)
+    {
+        NonnegativeFloatingPointParameter testParam = 
+            new NonnegativeFloatingPointParameter("test");
+        System.out.println(testParam.isValid("-1"));
+    }
 
 }
