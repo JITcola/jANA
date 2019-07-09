@@ -128,8 +128,8 @@ public class JobDAG {
     {
         for (Job job: dag) {
             Precision jobBitDepth = job.getModuleList().get(0).getBitDepth();
-            BigInteger jobMpfrBits = job.getModuleList().get(0).getMpfrBits();
-            BigInteger jobSampleRate = job.getModuleList().get(0).getSampleRate();
+            int jobMpfrBits = job.getModuleList().get(0).getMpfrBits();
+            int jobSampleRate = job.getModuleList().get(0).getSampleRate();
             for (Module module: job.getModuleList()) {
                 if (jobBitDepth == Precision.DOUBLE && 
                     module.getBitDepth() == Precision.DOUBLE)
@@ -144,10 +144,10 @@ public class JobDAG {
                     ;
                 if (jobBitDepth == Precision.MULTIPRECISION &&
                     module.getBitDepth() == Precision.MULTIPRECISION) {
-                    if (jobMpfrBits.compareTo(module.getMpfrBits()) < 0)
+                    if (jobMpfrBits < module.getMpfrBits())
                         jobMpfrBits = module.getMpfrBits();
                 }
-                if (jobSampleRate.compareTo(module.getSampleRate()) < 0)
+                if (jobSampleRate < module.getSampleRate())
                     jobSampleRate = module.getSampleRate();
             }
             job.bitDepth = jobBitDepth;

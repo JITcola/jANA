@@ -43,11 +43,11 @@ public class JobDAGTest {
         testPatch1.addModule("FunctionGenerator");
         testPatch1.addModule("FunctionGenerator");
         testPatch1.addModule("FunctionGenerator");
-        testPatch1.getModuleList().get(3).setSampleRate(new BigInteger("96000"));
+        testPatch1.getModuleList().get(3).setSampleRate(96000);
         testPatch1.getModuleList().get(3).setBitDepth(Precision.MULTIPRECISION, "512");
-        testPatch1.getModuleList().get(8).setSampleRate(new BigInteger("192000"));
+        testPatch1.getModuleList().get(8).setSampleRate(192000);
         testPatch1.getModuleList().get(8).setBitDepth(Precision.MULTIPRECISION, "1024");
-        testPatch1.getModuleList().get(14).setSampleRate(new BigInteger("384000"));
+        testPatch1.getModuleList().get(14).setSampleRate(384000);
         testPatch1.getModuleList().get(14).setBitDepth(Precision.MULTIPRECISION, "128");
         testPatch1.getModuleList().get(1).getOut("mainOut").modulate(testPatch1.getModuleList().get(2).getIn("frequency"));
         testPatch1.getModuleList().get(2).getOut("mainOut").modulate(testPatch1.getModuleList().get(3).getIn("frequency"));
@@ -82,9 +82,9 @@ public class JobDAGTest {
         testPatch2.addModule("FunctionGenerator");
         testPatch2.addModule("FunctionGenerator");
         testPatch2.addModule("Delay");
-        testPatch2.getModuleList().get(1).setSampleRate(new BigInteger("768000"));
+        testPatch2.getModuleList().get(1).setSampleRate(768000);
         testPatch2.getModuleList().get(1).setBitDepth(Precision.MULTIPRECISION, "1024");
-        testPatch2.getModuleList().get(7).setSampleRate(new BigInteger("96000"));
+        testPatch2.getModuleList().get(7).setSampleRate(96000);
         testPatch2.getModuleList().get(7).setBitDepth(Precision.MULTIPRECISION, "512");
         testPatch2.getModuleList().get(0).getOut("mainOut").modulate(testPatch2.getModuleList().get(1).getIn("frequency"));
         testPatch2.getModuleList().get(0).getOut("auxOut1").modulate(testPatch2.getModuleList().get(2).getIn("phase"));
@@ -269,42 +269,42 @@ public class JobDAGTest {
     public void testSetJobBitDepthsAndSampleRates() {
          
         assertTrue(component_jobDAG1_0.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_0.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_0.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_0.getMpfrBits() == 64 &&
+                   component_jobDAG1_0.getSampleRate()== 44100);
         assertTrue(component_jobDAG1_1.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_1.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_1.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_1.getMpfrBits() == 64 &&
+                   component_jobDAG1_1.getSampleRate() == 44100);
         assertTrue(component_jobDAG1_2.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_2.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_2.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_2.getMpfrBits() == 64 &&
+                   component_jobDAG1_2.getSampleRate() == 44100);
         assertTrue(component_jobDAG1_3.getBitDepth() == Precision.MULTIPRECISION &&
-                   component_jobDAG1_3.getMpfrBits().equals(new BigInteger("512")) &&
-                   component_jobDAG1_3.getSampleRate().equals(new BigInteger("96000")));
+                   component_jobDAG1_3.getMpfrBits() == 512 &&
+                   component_jobDAG1_3.getSampleRate() == 96000);
         assertTrue(component_jobDAG1_5.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_5.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_5.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_5.getMpfrBits() == 64 &&
+                   component_jobDAG1_5.getSampleRate() == 44100);
         assertTrue(component_jobDAG1_6.getBitDepth() == Precision.MULTIPRECISION &&
-                   component_jobDAG1_6.getMpfrBits().equals(new BigInteger("1024")) &&
-                   component_jobDAG1_6.getSampleRate().equals(new BigInteger("192000")));
+                   component_jobDAG1_6.getMpfrBits()== 1024 &&
+                   component_jobDAG1_6.getSampleRate() == 192000);
         assertTrue(component_jobDAG1_12.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_12.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_12.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_12.getMpfrBits() == 64 &&
+                   component_jobDAG1_12.getSampleRate() == 44100);
         assertTrue(component_jobDAG1_13.getBitDepth() == Precision.MULTIPRECISION &&
-                   component_jobDAG1_13.getMpfrBits().equals(new BigInteger("128")) &&
-                   component_jobDAG1_13.getSampleRate().equals(new BigInteger("384000")));
+                   component_jobDAG1_13.getMpfrBits() == 128 &&
+                   component_jobDAG1_13.getSampleRate() == 384000);
         assertTrue(component_jobDAG1_15.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG1_15.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG1_15.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG1_15.getMpfrBits() == 64 &&
+                   component_jobDAG1_15.getSampleRate() == 44100);
         
         assertTrue(component_jobDAG2_0.getBitDepth() == Precision.MULTIPRECISION &&
-                   component_jobDAG2_0.getMpfrBits().equals(new BigInteger("1024")) &&
-                   component_jobDAG2_0.getSampleRate().equals(new BigInteger("768000")));
+                   component_jobDAG2_0.getMpfrBits() == 1024 &&
+                   component_jobDAG2_0.getSampleRate() == 768000);
         assertTrue(component_jobDAG2_6.getBitDepth() == Precision.MULTIPRECISION &&
-                   component_jobDAG2_6.getMpfrBits().equals(new BigInteger("512")) &&
-                   component_jobDAG2_6.getSampleRate().equals(new BigInteger("96000")));
+                   component_jobDAG2_6.getMpfrBits() == 512 &&
+                   component_jobDAG2_6.getSampleRate() == 96000);
         assertTrue(component_jobDAG2_10.getBitDepth() == Precision.DOUBLE &&
-                   component_jobDAG2_10.getMpfrBits().equals(new BigInteger("64")) &&
-                   component_jobDAG2_10.getSampleRate().equals(new BigInteger("44100")));
+                   component_jobDAG2_10.getMpfrBits() == 64 &&
+                   component_jobDAG2_10.getSampleRate() == 44100);
         
     }
     

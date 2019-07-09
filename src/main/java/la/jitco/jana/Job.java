@@ -16,8 +16,8 @@ public class Job {
     public double weight = 0;
     public boolean completed = false;
     public Precision bitDepth;
-    public BigInteger mpfrBits;
-    public BigInteger sampleRate;
+    public int mpfrBits;
+    public int sampleRate;
     public Map<Module, List<ModulationPair>> modInDependencies = 
             new HashMap<Module, List<ModulationPair>>();
     public List<ModOut> jobExternalModInDependencies = new ArrayList<ModOut>();
@@ -65,12 +65,12 @@ public class Job {
         return bitDepth;
     }
     
-    public BigInteger getMpfrBits()
+    public int getMpfrBits()
     {
         return mpfrBits;
     }
     
-    public BigInteger getSampleRate()
+    public int getSampleRate()
     {
         return sampleRate;
     }

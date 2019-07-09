@@ -52,8 +52,8 @@ public class ParallelRenderer {
                               (new PrecisionClass(job.getBitDepth())).toString() + 
                               "\n");
                 jobFileWriter.write("Multiprecision bits: " + 
-                              job.getMpfrBits().toString() + "\n");
-                jobFileWriter.write("Sample rate: " + job.getSampleRate().toString() +
+                              job.getMpfrBits() + "\n");
+                jobFileWriter.write("Sample rate: " + job.getSampleRate() +
                               "\n");
                 jobFileWriter.write("Length: " + patch.renderLength + "\n");
                 jobFileWriter.write("External ModOut dependencies: ");
@@ -231,7 +231,7 @@ public class ParallelRenderer {
         patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
         
-        patch.getModuleList().get(14).setSampleRate(new BigInteger("384000"));
+        patch.getModuleList().get(14).setSampleRate(384000);
         patch.getModuleList().get(14).setBitDepth(Precision.MULTIPRECISION, "128");
         
         patch.getModuleList().get(1).getOut("mainOut").modulate(patch.getModuleList().get(2).getIn("frequency"));

@@ -94,7 +94,7 @@ public class SerialRenderer {
         patch.addModule("FunctionGenerator");
         patch.addModule("FunctionGenerator");
         
-        patch.getModuleList().get(14).setSampleRate(new BigInteger("384000"));
+        patch.getModuleList().get(14).setSampleRate(384000);
         patch.getModuleList().get(14).setBitDepth(Precision.MULTIPRECISION, "128");
         
         patch.getModuleList().get(1).getOut("mainOut").modulate(patch.getModuleList().get(2).getIn("frequency"));

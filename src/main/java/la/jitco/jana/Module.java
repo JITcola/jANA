@@ -12,8 +12,8 @@ public class Module {
     public int id;
     protected String name;
     private Precision bitDepth = Precision.DOUBLE;
-    private BigInteger sampleRate = new BigInteger("44100");
-    private BigInteger mpfrBits = new BigInteger("64");
+    private int sampleRate = 44100;
+    private int mpfrBits = 64;
     
     protected Parameter[] paramArray; // static parameters, NOT modulation targets
     protected ModIn[] modInArray;
@@ -43,7 +43,7 @@ public class Module {
     {
         if (precision == Precision.DOUBLE) {
             bitDepth = precision;
-            mpfrBits = new BigInteger("64");
+            mpfrBits = 64;
             weightBitDepthMultiplier = 1.8;
         } else {
             System.err.printf("Bad precision argument passed to ");
@@ -57,7 +57,7 @@ public class Module {
         if (precision == Precision.MULTIPRECISION &&
             ((new BigInteger(bits)).compareTo(new BigInteger("64")) >= 0)) {
             bitDepth = precision;
-            mpfrBits = new BigInteger(bits);
+            mpfrBits = Integer.parseInt(bits);
             weightBitDepthMultiplier = Double.parseDouble(bits) *
                     0.4602678571428571 +
                     68.54285714285715;
@@ -68,7 +68,7 @@ public class Module {
         setWeight();
     }
     
-    public void setSampleRate(BigInteger sampleRate)
+    public void setSampleRate(Integer sampleRate)
     {
         this.sampleRate = sampleRate;
         weightSampleRateMultiplier = sampleRate.doubleValue();
@@ -181,12 +181,12 @@ public class Module {
         return bitDepth;
     }
     
-    public BigInteger getSampleRate()
+    public int getSampleRate()
     {
         return sampleRate;
     }
     
-    public BigInteger getMpfrBits()
+    public int getMpfrBits()
     {
         return mpfrBits;
     }
