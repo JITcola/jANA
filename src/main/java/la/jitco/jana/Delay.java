@@ -10,9 +10,9 @@ public class Delay extends Module {
         type = ModuleType.DELAY;
         name = "Delay " + id;
         paramArray = new Parameter[] {
-                         new PositiveIntegerParameter("initTime"),
-                         new NonnegativeIntegerParameter("initFeedback"),
-                         new NonnegativeIntegerParameter("initLevel")};
+                         new PositiveFloatingPointParameter("initTime"),
+                         new NonnegativeFloatingPointParameter("initFeedback"),
+                         new NonnegativeFloatingPointParameter("initLevel")};
         modInArray = new ModIn[] {new ModIn(this, "input"),
                                   new ModIn(this, "time"),
                                   new ModIn(this, "feedback"),
