@@ -408,30 +408,28 @@ void processJob(int jobId)
     while(getline(jobFile, currentLine)) {
         data = stripDataLabel(currentLine);
         if (data == " FunctionGenerator") {
+            getline(jobFile, currentLine);
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string baseFrequency = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            Function function = functionStringToFunction(data.substr(static_cast<std::string::size_type>(1)));
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string initPhase = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
             if (isMultiprecision) {
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string baseFrequency = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                Function function = functionStringToFunction(data.substr(static_cast<std::string::size_type>(1)));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initPhase = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
                 FunctionGenerator_Multi newFG(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
-                while (currentLine != "Dependency ModOuts:") {
+                while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
                     int modOutId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -447,7 +445,6 @@ void processJob(int jobId)
                     int modInId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -458,20 +455,6 @@ void processJob(int jobId)
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string baseFrequency = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                Function function = functionStringToFunction(data.substr(static_cast<std::string::size_type>(1)));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initPhase = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
                 FunctionGenerator_Double newFG(numSamples, function, baseFrequency, initPhase, initLevel);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
@@ -487,7 +470,6 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
                     modInArrayMapDouble.insert({modInId, newFG.modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
-                    std::cout << modInName << " " << modInId << " " << modOutId << "\n"; // DEBUG
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
                     std::string modOutName;
@@ -507,27 +489,25 @@ void processJob(int jobId)
             }
         }
         if (data == " Delay") {
+            getline(jobFile, currentLine);
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string initTime = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string initFeedback = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
+            data = stripDataLabel(currentLine);
+            std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+            getline(jobFile, currentLine);
             if (isMultiprecision) {
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initTime = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initFeedback = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
                 Delay_Multi newDelay(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
-                while (currentLine != "Dependency ModOuts:") {
+                while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
                     int modOutId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -543,7 +523,6 @@ void processJob(int jobId)
                     int modInId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -554,26 +533,13 @@ void processJob(int jobId)
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initTime = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initFeedback = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                data = stripDataLabel(currentLine);
-                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
-                getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
                 Delay_Double newDelay(numSamples, initTime, initFeedback, initLevel);
-                while (currentLine != "Dependency ModOuts:") {
+                while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
                     int modOutId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -589,7 +555,6 @@ void processJob(int jobId)
                     int modInId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
