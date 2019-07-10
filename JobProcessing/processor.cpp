@@ -568,7 +568,7 @@ void processJob(int jobId)
         }
     }
               
-    /* mpfr_free_cache (); IF MPFR IS USED? */
+    mpfr_free_cache ();
 }
 
 int main(void)
