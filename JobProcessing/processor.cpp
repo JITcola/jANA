@@ -123,24 +123,27 @@ public:
 class FunctionGenerator_Double : Module {
 public:
     
+    long int numSamples;
     double baseFrequency;
     Function function;
     double initPhase;
     double initLevel;
     
-    std::vector<double> *frequency = NULL;
-    std::vector<double> *phase = NULL;
-    std::vector<double> *level = NULL;
+    double *frequency = NULL;
+    double *phase = NULL;
+    double *level = NULL;
     
-    std::vector<double> *mainOut = NULL;
-    std::vector<double> *auxOut1 = NULL;
-    std::vector<double> *auxOut2 = NULL;
-    std::vector<double> *auxOut3 = NULL;
-    std::vector<double> *auxOut4 = NULL;
+    double *mainOut = NULL;
+    double *auxOut1 = NULL;
+    double *auxOut2 = NULL;
+    double *auxOut3 = NULL;
+    double *auxOut4 = NULL;
     
     FunctionGenerator_Double(long int numSamples, Function function, std::string baseFrequency, std::string initPhase, std::string initLevel) 
     {
-        mainOut = new std::vector<double>(numSamples);
+        this->numSamples = numSamples;
+        
+        mainOut = new double[this->numSamples];
         
         switch(function) {
             default: auxOut1 = auxOut2 = auxOut3 = auxOut4 = mainOut;
@@ -156,7 +159,7 @@ public:
     ~FunctionGenerator_Double()
     {
         switch(function) {
-            default: delete mainOut;
+            default: delete[] mainOut;
                      break;
         }
     }
@@ -166,31 +169,33 @@ public:
 class FunctionGenerator_Multi : Module {
 public:
     
+    long int numSamples;
     mpfr_t baseFrequency;
     Function function;
     mpfr_t initPhase;
     mpfr_t initLevel;
     
-    std::vector<mpfr_t> *frequency = NULL;
-    std::vector<mpfr_t> *phase = NULL;
-    std::vector<mpfr_t> *level = NULL;
+    mpfr_t *frequency;
+    mpfr_t *phase;
+    mpfr_t *level;
     
-    std::vector<mpfr_t> *mainOut = NULL;
-    std::vector<mpfr_t> *auxOut1 = NULL;
-    std::vector<mpfr_t> *auxOut2 = NULL;
-    std::vector<mpfr_t> *auxOut3 = NULL;
-    std::vector<mpfr_t> *auxOut4 = NULL;
+    mpfr_t *mainOut;
+    mpfr_t *auxOut1;
+    mpfr_t *auxOut2;
+    mpfr_t *auxOut3;
+    mpfr_t *auxOut4;
     
-    FunctionGenerator_Multi(long int numSamples, Function function, int precision, std::string baseFrequency, std::string initPhase, std::string initLevel)
+    FunctionGenerator_Multi(long int numSamples, Function function, std::string baseFrequency, std::string initPhase, std::string initLevel, int precision)
     {
-        mainOut = new std::vector<mpfr_t>(numSamples);
-        for (long int i = 0; i < numSamples; ++i) {
-            mpfr_t newNum;
-            mpfr_init2 (newNum, static_cast<mpfr_prec_t>(precision));
-            mainOut->push_back(newNum);
-        }
+        this->numSamples = numSamples;
         
-        switch(function) {
+        mainOut = new mpfr_t[this->numSamples];
+        
+        for (long int i = 0; i < numSamples; ++i)
+            mpfr_init2 (mainOut[i], static_cast<mpfr_prec_t>(precision));
+            
+        
+       switch(function) {
             default: auxOut1 = auxOut2 = auxOut3 = auxOut4 = mainOut;
                      break;
         }
@@ -199,22 +204,23 @@ public:
         mpfr_set_str (this->baseFrequency, baseFrequency.c_str(), 10, MPFR_RNDN);
         mpfr_set_str (this->initPhase, initPhase.c_str(), 10, MPFR_RNDN);
         mpfr_set_str (this->initLevel, initLevel.c_str(), 10, MPFR_RNDN);
-        
     }
-
+    
     ~FunctionGenerator_Multi()
     {
-        for (long int i = 0; i < mainOut->size(); ++i)
-            mpfr_clear ((*mainOut)[i]);
+        for (long int i = 0; i < numSamples; ++i)
+            mpfr_clear (mainOut[i]);
         switch(function) {
-            default: delete mainOut;
+            default: delete[] mainOut;
                      break;
         }
         
         mpfr_clears (this->baseFrequency, this->initPhase, this->initLevel, (mpfr_ptr) 0);
     }
+    
 };
-        
+
+/*
 
 class Delay_Double : Module {
 public:
@@ -258,5 +264,33 @@ public:
     std::vector<mpfr_t> *level = NULL;
     
     std::vector<mpfr_t> *mainOut = NULL;
+    
+    Delay_Multi(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel, int precision)
+    {
+        mainOut = new std::vector<mpfr_t>(numSamples);
+        for (long int i = 0; i < numSamples; ++i) {
+            mpfr_t newNum;
+            mpfr_init2 (newNum, static_cast<mpfr_prec_t>(precision));
+            mainOut->push_back(newNum);
+        }
+        
+        mpfr_inits2 (static_cast<mpfr_prec_t>(precision), this->initTime, this->initFeedback, this->initLevel, (mpfr_ptr) 0);
+        mpfr_set_str (this->initTime, initTime.c_str(), 10, MPFR_RNDN);
+        mpfr_set_str (this->initFeedback, initFeedback.c_str(), 10, MPFR_RNDN);
+        mpfr_set_str (this->initLevel, initLevel.c_str(), 10, MPFR_RNDN);
+        
+    }
+    
+    ~Delay_Multi()
+    {
+        for (long int i = 0; i < mainOut->size(); ++i)
+            mpfr_clear ((*mainOut)[i]);
+        delete mainOut;
+        
+        mpfr_clears (this->initTime, this->initFeedback, this->initLevel, (mpfr_ptr) 0);
+    }
+    
 };
+
+*/
     
