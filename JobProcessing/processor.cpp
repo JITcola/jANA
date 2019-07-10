@@ -31,12 +31,21 @@ Function functionStringToFunction(std::string input)
         return Function::invalid;
 }
 
-class Module {
+class DoubleModule {
 public:
     virtual void computeSample(long int sampleIndex) = 0;
+    virtual double *modInNameToArray(std::string modInName) = 0;
+    virtual double *modOutNameToArray(std::string modOutName) = 0;
 };
 
-class FunctionGenerator_Double : Module {
+class MultiModule {
+public:
+    virtual void computeSample(long int sampleIndex) = 0;
+    virtual mpfr_t *modInNameToArray(std::string modInName) = 0;
+    virtual mpfr_t *modOutNameToArray(std::string modOutName) = 0;
+};
+
+class FunctionGenerator_Double : public DoubleModule {
 public:
     
     long int numSamples;
@@ -116,7 +125,7 @@ public:
     
 };
 
-class FunctionGenerator_Multi : Module {
+class FunctionGenerator_Multi : public MultiModule {
 public:
     
     long int numSamples;
@@ -204,7 +213,7 @@ public:
     
 };
 
-class Delay_Double : Module {
+class Delay_Double : public DoubleModule {
 public:
     
     long int numSamples;
@@ -264,7 +273,7 @@ public:
     }
 };
 
-class Delay_Multi : Module {
+class Delay_Multi : public MultiModule {
 public:
     
     long int numSamples;
@@ -349,7 +358,8 @@ void processJob(int jobId)
     std::vector<int> externalModInDependencies;
     
     
-    std::vector<Module> moduleVector;
+    std::vector<DoubleModule *> moduleVectorDouble;
+    std::vector<MultiModule *> moduleVectorMulti;
     std::map<int,double *> modInArrayMapDouble;
     std::map<int, mpfr_t *> modInArrayMapMulti;
     std::map<int, double *> modOutArrayMapDouble;
@@ -424,7 +434,8 @@ void processJob(int jobId)
             std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
             getline(jobFile, currentLine);
             if (isMultiprecision) {
-                FunctionGenerator_Multi newFG(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
+                FunctionGenerator_Multi *newFG = new FunctionGenerator_Multi(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
+                moduleVectorMulti.push_back(newFG);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
@@ -437,7 +448,7 @@ void processJob(int jobId)
                     modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modInArrayMapMulti.insert({modInId, newFG.modInNameToArray(modInName)});
+                    modInArrayMapMulti.insert({modInId, moduleVectorMulti.back()->modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
@@ -452,11 +463,12 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                             semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modOutArrayMapMulti.insert({modOutId, newFG.modOutNameToArray(modOutName)});
+                    modOutArrayMapMulti.insert({modOutId, moduleVectorMulti.back()->modOutNameToArray(modOutName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                FunctionGenerator_Double newFG(numSamples, function, baseFrequency, initPhase, initLevel);
+                FunctionGenerator_Double *newFG = new FunctionGenerator_Double(numSamples, function, baseFrequency, initPhase, initLevel);
+                moduleVectorDouble.push_back(newFG);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
@@ -469,7 +481,7 @@ void processJob(int jobId)
                     modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modInArrayMapDouble.insert({modInId, newFG.modInNameToArray(modInName)});
+                    modInArrayMapDouble.insert({modInId, moduleVectorDouble.back()->modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
@@ -484,7 +496,7 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                             semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modOutArrayMapDouble.insert({modOutId, newFG.modOutNameToArray(modOutName)});
+                    modOutArrayMapDouble.insert({modOutId, moduleVectorDouble.back()->modOutNameToArray(modOutName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
             }
@@ -502,7 +514,8 @@ void processJob(int jobId)
             std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
             getline(jobFile, currentLine);
             if (isMultiprecision) {
-                Delay_Multi newDelay(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
+                Delay_Multi *newDelay = new Delay_Multi(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
+                moduleVectorMulti.push_back(newDelay);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
@@ -515,7 +528,7 @@ void processJob(int jobId)
                     modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modInArrayMapMulti.insert({modInId, newDelay.modInNameToArray(modInName)});
+                    modInArrayMapMulti.insert({modInId, moduleVectorMulti.back()->modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
@@ -530,11 +543,12 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                             semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modOutArrayMapMulti.insert({modOutId, newDelay.modOutNameToArray(modOutName)});
+                    modOutArrayMapMulti.insert({modOutId, moduleVectorMulti.back()->modOutNameToArray(modOutName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                Delay_Double newDelay(numSamples, initTime, initFeedback, initLevel);
+                Delay_Double *newDelay = new Delay_Double(numSamples, initTime, initFeedback, initLevel);
+                moduleVectorDouble.push_back(newDelay);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
@@ -547,7 +561,7 @@ void processJob(int jobId)
                     modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modInArrayMapDouble.insert({modInId, newDelay.modInNameToArray(modInName)});
+                    modInArrayMapDouble.insert({modInId, moduleVectorDouble.back()->modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
@@ -562,7 +576,7 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
                                                             semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
                     modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
-                    modOutArrayMapDouble.insert({modOutId, newDelay.modOutNameToArray(modOutName)});
+                    modOutArrayMapDouble.insert({modOutId, moduleVectorDouble.back()->modOutNameToArray(modOutName)});
                     modConnectionMap.insert({modInId, modOutId});
                 }
             }
