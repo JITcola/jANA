@@ -472,15 +472,13 @@ void processJob(int jobId)
                 data = stripDataLabel(currentLine);
                 std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
                 getline(jobFile, currentLine);
-                getline(jobFile, currentLine);
                 FunctionGenerator_Double newFG(numSamples, function, baseFrequency, initPhase, initLevel);
-                while (currentLine != "Dependency ModOuts:") {
+                while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
                     int modInId;
                     int modOutId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -489,6 +487,7 @@ void processJob(int jobId)
                     modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
                     modInArrayMapDouble.insert({modInId, newFG.modInNameToArray(modInName)});
                     modConnectionMap.insert({modInId, modOutId});
+                    std::cout << modInName << " " << modInId << " " << modOutId << "\n"; // DEBUG
                 }
                 while (getline(jobFile, currentLine) && currentLine != "Module:") {
                     std::string modOutName;
@@ -496,7 +495,6 @@ void processJob(int jobId)
                     int modInId;
                     std::string::size_type colonIndex;
                     std::string::size_type semicolonIndex;
-                    getline(jobFile, currentLine);
                     colonIndex = currentLine.find(':');
                     semicolonIndex = currentLine.find(';');
                     modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
@@ -508,7 +506,7 @@ void processJob(int jobId)
                 }
             }
         }
-        if (data == "Delay") {
+        if (data == " Delay") {
             if (isMultiprecision) {
                 getline(jobFile, currentLine);
                 getline(jobFile, currentLine);
