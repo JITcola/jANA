@@ -124,6 +124,7 @@ class FunctionGenerator_Double : Module {
 public:
     
     long int numSamples;
+    
     double baseFrequency;
     Function function;
     double initPhase;
@@ -170,6 +171,7 @@ class FunctionGenerator_Multi : Module {
 public:
     
     long int numSamples;
+    
     mpfr_t baseFrequency;
     Function function;
     mpfr_t initPhase;
@@ -215,30 +217,32 @@ public:
                      break;
         }
         
-        mpfr_clears (this->baseFrequency, this->initPhase, this->initLevel, (mpfr_ptr) 0);
+        mpfr_clears (baseFrequency, initPhase, initLevel, (mpfr_ptr) 0);
     }
     
 };
 
-/*
-
 class Delay_Double : Module {
 public:
+    
+    long int numSamples;
     
     double initTime;
     double initFeedback;
     double initLevel;
     
-    std::vector<double> *input = NULL;
-    std::vector<double> *time = NULL;
-    std::vector<double> *feedback = NULL;
-    std::vector<double> *level = NULL;
+    double *input = NULL;
+    double *time = NULL;
+    double *feedback = NULL;
+    double *level = NULL;
     
-    std::vector<double> *mainOut = NULL;
+    double *mainOut = NULL;
     
     Delay_Double(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel)
     {
-        mainOut = new std::vector<double>(numSamples);
+        this->numSamples = numSamples;
+        
+        mainOut = new double[this->numSamples];
         
         this->initTime = std::stod(initTime);
         this->initFeedback = std::stod(initFeedback);
@@ -247,33 +251,34 @@ public:
     
     ~Delay_Double()
     {
-        delete mainOut;
+        delete[] mainOut;
     }
 };
 
 class Delay_Multi : Module {
 public:
     
+    long int numSamples;
+    
     mpfr_t initTime;
     mpfr_t initFeedback;
     mpfr_t initLevel;
     
-    std::vector<mpfr_t> *input = NULL;
-    std::vector<mpfr_t> *time = NULL;
-    std::vector<mpfr_t> *feedback = NULL;
-    std::vector<mpfr_t> *level = NULL;
+    mpfr_t *input = NULL;
+    mpfr_t *time = NULL;
+    mpfr_t *feedback = NULL;
+    mpfr_t *level = NULL;
     
-    std::vector<mpfr_t> *mainOut = NULL;
+    mpfr_t *mainOut = NULL;
     
     Delay_Multi(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel, int precision)
     {
-        mainOut = new std::vector<mpfr_t>(numSamples);
-        for (long int i = 0; i < numSamples; ++i) {
-            mpfr_t newNum;
-            mpfr_init2 (newNum, static_cast<mpfr_prec_t>(precision));
-            mainOut->push_back(newNum);
-        }
+        this->numSamples = numSamples;
         
+        mainOut = new mpfr_t[this->numSamples];
+        for (long int i = 0; i < numSamples; ++i)
+            mpfr_init2 (mainOut[i], static_cast<mpfr_prec_t>(precision));
+                    
         mpfr_inits2 (static_cast<mpfr_prec_t>(precision), this->initTime, this->initFeedback, this->initLevel, (mpfr_ptr) 0);
         mpfr_set_str (this->initTime, initTime.c_str(), 10, MPFR_RNDN);
         mpfr_set_str (this->initFeedback, initFeedback.c_str(), 10, MPFR_RNDN);
@@ -283,14 +288,12 @@ public:
     
     ~Delay_Multi()
     {
-        for (long int i = 0; i < mainOut->size(); ++i)
-            mpfr_clear ((*mainOut)[i]);
-        delete mainOut;
+        for (long int i = 0; i < numSamples; ++i)
+            mpfr_clear (mainOut[i]);
         
-        mpfr_clears (this->initTime, this->initFeedback, this->initLevel, (mpfr_ptr) 0);
+        delete[] mainOut;
+        
+        mpfr_clears (initTime, initFeedback, initLevel, (mpfr_ptr) 0);
     }
     
 };
-
-*/
-    
