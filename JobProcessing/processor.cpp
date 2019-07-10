@@ -34,15 +34,15 @@ Function functionStringToFunction(std::string input)
 class DoubleModule {
 public:
     virtual void computeSample(long int sampleIndex) = 0;
-    virtual double *modInNameToArray(std::string modInName) = 0;
-    virtual double *modOutNameToArray(std::string modOutName) = 0;
+    virtual double* modInNameToArray(std::string modInName) = 0;
+    virtual double* modOutNameToArray(std::string modOutName) = 0;
 };
 
 class MultiModule {
 public:
     virtual void computeSample(long int sampleIndex) = 0;
-    virtual mpfr_t *modInNameToArray(std::string modInName) = 0;
-    virtual mpfr_t *modOutNameToArray(std::string modOutName) = 0;
+    virtual mpfr_t* modInNameToArray(std::string modInName) = 0;
+    virtual mpfr_t* modOutNameToArray(std::string modOutName) = 0;
 };
 
 class FunctionGenerator_Double : public DoubleModule {
@@ -55,15 +55,15 @@ public:
     double initPhase;
     double initLevel;
     
-    double *frequency = NULL;
-    double *phase = NULL;
-    double *level = NULL;
+    double* frequency = nullptr;
+    double* phase = nullptr;
+    double* level = nullptr;
     
-    double *mainOut = NULL;
-    double *auxOut1 = NULL;
-    double *auxOut2 = NULL;
-    double *auxOut3 = NULL;
-    double *auxOut4 = NULL;
+    double* mainOut = nullptr;
+    double* auxOut1 = nullptr;
+    double* auxOut2 = nullptr;
+    double* auxOut3 = nullptr;
+    double* auxOut4 = nullptr;
     
     FunctionGenerator_Double(long int numSamples, Function function, std::string baseFrequency, std::string initPhase, std::string initLevel) 
     {
@@ -90,7 +90,7 @@ public:
         }
     }
     
-    double *modInNameToArray(std::string modInName)
+    double* modInNameToArray(std::string modInName)
     {
         if (modInName == "frequency")
             return frequency;
@@ -99,10 +99,10 @@ public:
         else if (modInName == "level")
             return level;
         else
-            return NULL;
+            return nullptr;
     }
     
-    double *modOutNameToArray(std::string modOutName)
+    double* modOutNameToArray(std::string modOutName)
     {
         if (modOutName == "mainOut")
             return mainOut;
@@ -115,7 +115,7 @@ public:
         else if (modOutName == "auxOut4")
             return auxOut4;
         else
-            return NULL;
+            return nullptr;
     }
     
     void computeSample(long int sampleIndex)
@@ -135,15 +135,15 @@ public:
     mpfr_t initPhase;
     mpfr_t initLevel;
     
-    mpfr_t *frequency;
-    mpfr_t *phase;
-    mpfr_t *level;
+    mpfr_t* frequency;
+    mpfr_t* phase;
+    mpfr_t* level;
     
-    mpfr_t *mainOut;
-    mpfr_t *auxOut1;
-    mpfr_t *auxOut2;
-    mpfr_t *auxOut3;
-    mpfr_t *auxOut4;
+    mpfr_t* mainOut;
+    mpfr_t* auxOut1;
+    mpfr_t* auxOut2;
+    mpfr_t* auxOut3;
+    mpfr_t* auxOut4;
     
     FunctionGenerator_Multi(long int numSamples, Function function, std::string baseFrequency, std::string initPhase, std::string initLevel, int precision)
     {
@@ -178,7 +178,7 @@ public:
         mpfr_clears (baseFrequency, initPhase, initLevel, (mpfr_ptr) 0);
     }
     
-    mpfr_t *modInNameToArray(std::string modInName)
+    mpfr_t* modInNameToArray(std::string modInName)
     {
         if (modInName == "frequency")
             return frequency;
@@ -187,10 +187,10 @@ public:
         else if (modInName == "level")
             return level;
         else
-            return NULL;
+            return nullptr;
     }
     
-    mpfr_t *modOutNameToArray(std::string modOutName)
+    mpfr_t* modOutNameToArray(std::string modOutName)
     {
         if (modOutName == "mainOut")
             return mainOut;
@@ -203,7 +203,7 @@ public:
         else if (modOutName == "auxOut4")
             return auxOut4;
         else
-            return NULL;
+            return nullptr;
     }
     
     void computeSample(long int sampleIndex)
@@ -222,12 +222,12 @@ public:
     double initFeedback;
     double initLevel;
     
-    double *input = NULL;
-    double *time = NULL;
-    double *feedback = NULL;
-    double *level = NULL;
+    double* input = nullptr;
+    double* time = nullptr;
+    double* feedback = nullptr;
+    double* level = nullptr;
     
-    double *mainOut = NULL;
+    double* mainOut = nullptr;
     
     Delay_Double(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel)
     {
@@ -245,7 +245,7 @@ public:
         delete[] mainOut;
     }
     
-    double *modInNameToArray(std::string modInName)
+    double* modInNameToArray(std::string modInName)
     {
         if (modInName == "input")
             return input;
@@ -256,15 +256,15 @@ public:
         else if (modInName == "level")
             return level;
         else
-            return NULL;
+            return nullptr;
     }
     
-    double *modOutNameToArray(std::string modOutName)
+    double* modOutNameToArray(std::string modOutName)
     {
         if (modOutName == "mainOut")
             return mainOut;
         else
-            return NULL;
+            return nullptr;
     }
     
     void computeSample(long int sampleIndex)
@@ -282,12 +282,12 @@ public:
     mpfr_t initFeedback;
     mpfr_t initLevel;
     
-    mpfr_t *input = NULL;
-    mpfr_t *time = NULL;
-    mpfr_t *feedback = NULL;
-    mpfr_t *level = NULL;
+    mpfr_t* input = nullptr;
+    mpfr_t* time = nullptr;
+    mpfr_t* feedback = nullptr;
+    mpfr_t* level = nullptr;
     
-    mpfr_t *mainOut = NULL;
+    mpfr_t* mainOut = nullptr;
     
     Delay_Multi(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel, int precision)
     {
@@ -314,7 +314,7 @@ public:
         mpfr_clears (initTime, initFeedback, initLevel, (mpfr_ptr) 0);
     }
     
-    mpfr_t *modInNameToArray(std::string modInName)
+    mpfr_t* modInNameToArray(std::string modInName)
     {
         if (modInName == "input")
             return input;
@@ -325,15 +325,15 @@ public:
         else if (modInName == "level")
             return level;
         else
-            return NULL;
+            return nullptr;
     }
     
-    mpfr_t *modOutNameToArray(std::string modOutName)
+    mpfr_t* modOutNameToArray(std::string modOutName)
     {
         if (modOutName == "mainOut")
             return mainOut;
         else
-            return NULL;
+            return nullptr;
     }
     
     void computeSample(long int sampleIndex)
@@ -358,12 +358,12 @@ void processJob(int jobId)
     std::vector<int> externalModInDependencies;
     
     
-    std::vector<DoubleModule *> moduleVectorDouble;
-    std::vector<MultiModule *> moduleVectorMulti;
-    std::map<int,double *> modInArrayMapDouble;
-    std::map<int, mpfr_t *> modInArrayMapMulti;
-    std::map<int, double *> modOutArrayMapDouble;
-    std::map<int, mpfr_t *> modOutArrayMapMulti;
+    std::vector<DoubleModule*> moduleVectorDouble;
+    std::vector<MultiModule*> moduleVectorMulti;
+    std::map<int, double*> modInArrayMapDouble;
+    std::map<int, mpfr_t*> modInArrayMapMulti;
+    std::map<int, double*> modOutArrayMapDouble;
+    std::map<int, mpfr_t*> modOutArrayMapMulti;
     std::map<int, int> modConnectionMap; // Note that the keys are always ModInIds and the values are always ModOutIds
 
     std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
@@ -434,7 +434,7 @@ void processJob(int jobId)
             std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
             getline(jobFile, currentLine);
             if (isMultiprecision) {
-                FunctionGenerator_Multi *newFG = new FunctionGenerator_Multi(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
+                FunctionGenerator_Multi* newFG = new FunctionGenerator_Multi(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
                 moduleVectorMulti.push_back(newFG);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
@@ -467,7 +467,7 @@ void processJob(int jobId)
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                FunctionGenerator_Double *newFG = new FunctionGenerator_Double(numSamples, function, baseFrequency, initPhase, initLevel);
+                FunctionGenerator_Double* newFG = new FunctionGenerator_Double(numSamples, function, baseFrequency, initPhase, initLevel);
                 moduleVectorDouble.push_back(newFG);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
@@ -514,7 +514,7 @@ void processJob(int jobId)
             std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
             getline(jobFile, currentLine);
             if (isMultiprecision) {
-                Delay_Multi *newDelay = new Delay_Multi(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
+                Delay_Multi* newDelay = new Delay_Multi(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
                 moduleVectorMulti.push_back(newDelay);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
@@ -547,7 +547,7 @@ void processJob(int jobId)
                     modConnectionMap.insert({modInId, modOutId});
                 }
             } else {
-                Delay_Double *newDelay = new Delay_Double(numSamples, initTime, initFeedback, initLevel);
+                Delay_Double* newDelay = new Delay_Double(numSamples, initTime, initFeedback, initLevel);
                 moduleVectorDouble.push_back(newDelay);
                 while (getline(jobFile, currentLine), currentLine != "Dependency ModOuts:") {
                     std::string modInName;
