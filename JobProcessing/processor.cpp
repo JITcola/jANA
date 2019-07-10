@@ -1,3 +1,5 @@
+/* DON'T FORGET TO CLEAR MPFR CACHE AND CLEAR MPFR OBJECTS AT THE END! */
+
 #include <iostream>
 #include <filesystem>
 #include <string>
@@ -27,7 +29,7 @@ void processJob(int jobId)
     std::string::size_type index;
     std::string data;
     int id {jobId};
-    bool doublePrecision;
+    bool isMultiprecision;
     int multiprecisionBits;
     long int sampleRate;
     long int length;
@@ -44,7 +46,7 @@ void processJob(int jobId)
     id = std::stoi(data);
     getline(jobFile, currentLine);
     data = stripDataLabel(currentLine);
-    doublePrecision = data == " double" ? true : false;
+    isMultiprecision = data == " double" ? false : true;
     getline(jobFile, currentLine);
     data = stripDataLabel(currentLine);
     multiprecisionBits = std::stoi(data);
@@ -87,7 +89,7 @@ void processJob(int jobId)
     }
             
     std::cout << id << "\n"
-              << doublePrecision << "\n"
+              << isMultiprecision << "\n"
               << multiprecisionBits << "\n"
               << sampleRate << "\n"
               << length << "\n";
@@ -102,12 +104,16 @@ void processJob(int jobId)
     std::vector<mpfr_t> mpfrVec;
     std::cout << "doubleVec max size: " << doubleVec.max_size() << "\n"
               << "mpfrVec max size: " << mpfrVec.max_size() << "\n";
+              
+    /* mpfr_free_cache (); IF MPFR IS USED? */
 }
 
 std::string stripDataLabel(std::string line)
 {
     return line.substr(line.find(": ") + static_cast<std::string::size_type>(1));
 }
+
+enum class Function { sine, saw, square, };
 
 class Module {
 public:
@@ -116,57 +122,141 @@ public:
 
 class FunctionGenerator_Double : Module {
 public:
+    
     double baseFrequency;
-    int function;
+    Function function;
     double initPhase;
     double initLevel;
+    
     std::vector<double> *frequency = NULL;
     std::vector<double> *phase = NULL;
     std::vector<double> *level = NULL;
+    
     std::vector<double> *mainOut = NULL;
     std::vector<double> *auxOut1 = NULL;
     std::vector<double> *auxOut2 = NULL;
     std::vector<double> *auxOut3 = NULL;
     std::vector<double> *auxOut4 = NULL;
+    
+    FunctionGenerator_Double(long int numSamples, Function function, std::string baseFrequency, std::string initPhase, std::string initLevel) 
+    {
+        mainOut = new std::vector<double>(numSamples);
+        
+        switch(function) {
+            default: auxOut1 = auxOut2 = auxOut3 = auxOut4 = mainOut;
+                     break;
+    }
+    
+    this->baseFrequency = std::stod(baseFrequency);
+    this->initPhase = std::stod(initPhase);
+    this->initLevel = std::stod(initLevel);
+    
+    }
+    
+    ~FunctionGenerator_Double()
+    {
+        switch(function) {
+            default: delete mainOut;
+                     break;
+        }
+    }
+    
 };
 
 class FunctionGenerator_Multi : Module {
 public:
+    
     mpfr_t baseFrequency;
-    int function;
+    Function function;
     mpfr_t initPhase;
     mpfr_t initLevel;
+    
     std::vector<mpfr_t> *frequency = NULL;
     std::vector<mpfr_t> *phase = NULL;
     std::vector<mpfr_t> *level = NULL;
+    
     std::vector<mpfr_t> *mainOut = NULL;
     std::vector<mpfr_t> *auxOut1 = NULL;
     std::vector<mpfr_t> *auxOut2 = NULL;
     std::vector<mpfr_t> *auxOut3 = NULL;
     std::vector<mpfr_t> *auxOut4 = NULL;
+    
+    FunctionGenerator_Multi(long int numSamples, Function function, int precision, std::string baseFrequency, std::string initPhase, std::string initLevel)
+    {
+        mainOut = new std::vector<mpfr_t>(numSamples);
+        for (long int i = 0; i < numSamples; ++i) {
+            mpfr_t newNum;
+            mpfr_init2 (newNum, static_cast<mpfr_prec_t>(precision));
+            mainOut->push_back(newNum);
+        }
+        
+        switch(function) {
+            default: auxOut1 = auxOut2 = auxOut3 = auxOut4 = mainOut;
+                     break;
+        }
+        
+        mpfr_inits2 (static_cast<mpfr_prec_t>(precision), this->baseFrequency, this->initPhase, this->initLevel, (mpfr_ptr) 0);
+        mpfr_set_str (this->baseFrequency, baseFrequency.c_str(), 10, MPFR_RNDN);
+        mpfr_set_str (this->initPhase, initPhase.c_str(), 10, MPFR_RNDN);
+        mpfr_set_str (this->initLevel, initLevel.c_str(), 10, MPFR_RNDN);
+        
+    }
+
+    ~FunctionGenerator_Multi()
+    {
+        for (long int i = 0; i < mainOut->size(); ++i)
+            mpfr_clear ((*mainOut)[i]);
+        switch(function) {
+            default: delete mainOut;
+                     break;
+        }
+        
+        mpfr_clears (this->baseFrequency, this->initPhase, this->initLevel, (mpfr_ptr) 0);
+    }
 };
+        
 
 class Delay_Double : Module {
 public:
+    
     double initTime;
     double initFeedback;
     double initLevel;
+    
     std::vector<double> *input = NULL;
     std::vector<double> *time = NULL;
     std::vector<double> *feedback = NULL;
     std::vector<double> *level = NULL;
+    
     std::vector<double> *mainOut = NULL;
+    
+    Delay_Double(long int numSamples, std::string initTime, std::string initFeedback, std::string initLevel)
+    {
+        mainOut = new std::vector<double>(numSamples);
+        
+        this->initTime = std::stod(initTime);
+        this->initFeedback = std::stod(initFeedback);
+        this->initLevel = std::stod(initLevel);
+    }
+    
+    ~Delay_Double()
+    {
+        delete mainOut;
+    }
 };
 
 class Delay_Multi : Module {
 public:
+    
     mpfr_t initTime;
     mpfr_t initFeedback;
     mpfr_t initLevel;
+    
     std::vector<mpfr_t> *input = NULL;
     std::vector<mpfr_t> *time = NULL;
     std::vector<mpfr_t> *feedback = NULL;
     std::vector<mpfr_t> *level = NULL;
+    
     std::vector<mpfr_t> *mainOut = NULL;
 };
     
