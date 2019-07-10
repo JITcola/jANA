@@ -12,112 +12,28 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-void processJob(int jobId);
-
-std::string stripDataLabel(std::string line);
-
-int main(void)
-{
-    processJob(5);
-    return 0;
-}
-
-void processJob(int jobId)
-{
-    std::string currentLine;
-    std::string standardSeparator{": "};
-    std::string::size_type index;
-    std::string data;
-    int id {jobId};
-    bool isMultiprecision;
-    int multiprecisionBits;
-    long int sampleRate;
-    long int length;
-    std::vector<int> externalModOutDependencies;
-    std::vector<int> externalModInDependencies;
-    
-    std::map<int,std::vector<double>> modIoMapDouble;
-    std::map<int, std::vector<mpfr_t>> modIoMapMulti;
-
-    std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
-    
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    id = std::stoi(data);
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    isMultiprecision = data == " double" ? false : true;
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    multiprecisionBits = std::stoi(data);
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    sampleRate = static_cast<long int>(std::stoi(data));
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    length = static_cast<long int>(std::stoi(data));
-    const long int numSamples = length * sampleRate;
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    if (data != " ") {
-        if (data.find(',') == std::string::npos) {
-            externalModOutDependencies.push_back(stoi(data));
-        } else {
-            std::string::size_type nextCommaIndex = data.find(',');
-            while (nextCommaIndex != std::string::npos) {
-                externalModOutDependencies.push_back(stoi(data.substr(static_cast<std::string::size_type>(0), nextCommaIndex)));
-                data = data.substr(nextCommaIndex + static_cast<std::string::size_type>(1));
-                nextCommaIndex = data.find(',');
-            }
-            externalModOutDependencies.push_back(stoi(data));
-        }
-    }
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    if (data != " ") {
-        if (data.find(',') == std::string::npos) {
-            externalModInDependencies.push_back(stoi(data));
-        } else {
-            std::string::size_type nextCommaIndex = data.find(',');
-            while (nextCommaIndex != std::string::npos) {
-                externalModInDependencies.push_back(stoi(data.substr(static_cast<std::string::size_type>(0), nextCommaIndex)));
-                data = data.substr(nextCommaIndex + static_cast<std::string::size_type>(1));
-                nextCommaIndex = data.find(',');
-            }
-            externalModInDependencies.push_back(stoi(data));
-        }
-    }
-            
-    std::cout << id << "\n"
-              << isMultiprecision << "\n"
-              << multiprecisionBits << "\n"
-              << sampleRate << "\n"
-              << length << "\n";
-    for (int modId: externalModOutDependencies)
-        std::cout << modId << " ";
-    std::cout << "\n";
-    for (int modId: externalModInDependencies)
-        std::cout << modId << " ";
-    std::cout << "\n";
-    
-    std::vector<double> doubleVec;
-    std::vector<mpfr_t> mpfrVec;
-    std::cout << "doubleVec max size: " << doubleVec.max_size() << "\n"
-              << "mpfrVec max size: " << mpfrVec.max_size() << "\n";
-              
-    /* mpfr_free_cache (); IF MPFR IS USED? */
-}
-
 std::string stripDataLabel(std::string line)
 {
     return line.substr(line.find(": ") + static_cast<std::string::size_type>(1));
 }
 
-enum class Function { sine, saw, square, };
+enum class Function { sine, saw, square, invalid, };
+
+Function functionStringToFunction(std::string input)
+{
+    if (input == "sine")
+        return Function::sine;
+    else if (input == "saw")
+        return Function::saw;
+    else if (input == "square")
+        return Function::square;
+    else
+        return Function::invalid;
+}
 
 class Module {
 public:
-    virtual void computeSample(long int sampleIndex);
+    virtual void computeSample(long int sampleIndex) = 0;
 };
 
 class FunctionGenerator_Double : Module {
@@ -163,6 +79,39 @@ public:
             default: delete[] mainOut;
                      break;
         }
+    }
+    
+    double *modInNameToArray(std::string modInName)
+    {
+        if (modInName == "frequency")
+            return frequency;
+        else if (modInName == "phase")
+            return phase;
+        else if (modInName == "level")
+            return level;
+        else
+            return NULL;
+    }
+    
+    double *modOutNameToArray(std::string modOutName)
+    {
+        if (modOutName == "mainOut")
+            return mainOut;
+        else if (modOutName == "auxOut1")
+            return auxOut1;
+        else if (modOutName == "auxOut2")
+            return auxOut2;
+        else if (modOutName == "auxOut3")
+            return auxOut3;
+        else if (modOutName == "auxOut4")
+            return auxOut4;
+        else
+            return NULL;
+    }
+    
+    void computeSample(long int sampleIndex)
+    {
+        return;
     }
     
 };
@@ -220,6 +169,39 @@ public:
         mpfr_clears (baseFrequency, initPhase, initLevel, (mpfr_ptr) 0);
     }
     
+    mpfr_t *modInNameToArray(std::string modInName)
+    {
+        if (modInName == "frequency")
+            return frequency;
+        else if (modInName == "phase")
+            return phase;
+        else if (modInName == "level")
+            return level;
+        else
+            return NULL;
+    }
+    
+    mpfr_t *modOutNameToArray(std::string modOutName)
+    {
+        if (modOutName == "mainOut")
+            return mainOut;
+        else if (modOutName == "auxOut1")
+            return auxOut1;
+        else if (modOutName == "auxOut2")
+            return auxOut2;
+        else if (modOutName == "auxOut3")
+            return auxOut3;
+        else if (modOutName == "auxOut4")
+            return auxOut4;
+        else
+            return NULL;
+    }
+    
+    void computeSample(long int sampleIndex)
+    {
+        return;
+    }
+    
 };
 
 class Delay_Double : Module {
@@ -252,6 +234,33 @@ public:
     ~Delay_Double()
     {
         delete[] mainOut;
+    }
+    
+    double *modInNameToArray(std::string modInName)
+    {
+        if (modInName == "input")
+            return input;
+        else if (modInName == "time")
+            return time;
+        else if (modInName == "feedback")
+            return feedback;
+        else if (modInName == "level")
+            return level;
+        else
+            return NULL;
+    }
+    
+    double *modOutNameToArray(std::string modOutName)
+    {
+        if (modOutName == "mainOut")
+            return mainOut;
+        else
+            return NULL;
+    }
+    
+    void computeSample(long int sampleIndex)
+    {
+        return;
     }
 };
 
@@ -296,4 +305,311 @@ public:
         mpfr_clears (initTime, initFeedback, initLevel, (mpfr_ptr) 0);
     }
     
+    mpfr_t *modInNameToArray(std::string modInName)
+    {
+        if (modInName == "input")
+            return input;
+        else if (modInName == "time")
+            return time;
+        else if (modInName == "feedback")
+            return feedback;
+        else if (modInName == "level")
+            return level;
+        else
+            return NULL;
+    }
+    
+    mpfr_t *modOutNameToArray(std::string modOutName)
+    {
+        if (modOutName == "mainOut")
+            return mainOut;
+        else
+            return NULL;
+    }
+    
+    void computeSample(long int sampleIndex)
+    {
+        return;
+    }
+    
 };
+
+void processJob(int jobId)
+{
+    std::string currentLine;
+    std::string standardSeparator{": "};
+    std::string::size_type index;
+    std::string data;
+    int id {jobId};
+    bool isMultiprecision;
+    int multiprecisionBits;
+    long int sampleRate;
+    long int length;
+    std::vector<int> externalModOutDependencies;
+    std::vector<int> externalModInDependencies;
+    
+    
+    std::vector<Module> moduleVector;
+    std::map<int,double *> modInArrayMapDouble;
+    std::map<int, mpfr_t *> modInArrayMapMulti;
+    std::map<int, double *> modOutArrayMapDouble;
+    std::map<int, mpfr_t *> modOutArrayMapMulti;
+    std::map<int, int> modConnectionMap; // Note that the keys are always ModInIds and the values are always ModOutIds
+
+    std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
+    
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    id = std::stoi(data);
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    isMultiprecision = data == " double" ? false : true;
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    multiprecisionBits = std::stoi(data);
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    sampleRate = static_cast<long int>(std::stoi(data));
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    length = static_cast<long int>(std::stoi(data));
+    const long int numSamples = length * sampleRate;
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    if (data != " ") {
+        if (data.find(',') == std::string::npos) {
+            externalModOutDependencies.push_back(stoi(data));
+        } else {
+            std::string::size_type nextCommaIndex = data.find(',');
+            while (nextCommaIndex != std::string::npos) {
+                externalModOutDependencies.push_back(stoi(data.substr(static_cast<std::string::size_type>(0), nextCommaIndex)));
+                data = data.substr(nextCommaIndex + static_cast<std::string::size_type>(1));
+                nextCommaIndex = data.find(',');
+            }
+            externalModOutDependencies.push_back(stoi(data));
+        }
+    }
+    getline(jobFile, currentLine);
+    data = stripDataLabel(currentLine);
+    if (data != " ") {
+        if (data.find(',') == std::string::npos) {
+            externalModInDependencies.push_back(stoi(data));
+        } else {
+            std::string::size_type nextCommaIndex = data.find(',');
+            while (nextCommaIndex != std::string::npos) {
+                externalModInDependencies.push_back(stoi(data.substr(static_cast<std::string::size_type>(0), nextCommaIndex)));
+                data = data.substr(nextCommaIndex + static_cast<std::string::size_type>(1));
+                nextCommaIndex = data.find(',');
+            }
+            externalModInDependencies.push_back(stoi(data));
+        }
+    }
+    getline(jobFile,currentLine);
+    while(getline(jobFile, currentLine)) {
+        data = stripDataLabel(currentLine);
+        if (data == " FunctionGenerator") {
+            if (isMultiprecision) {
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string baseFrequency = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                Function function = functionStringToFunction(data.substr(static_cast<std::string::size_type>(1)));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initPhase = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                FunctionGenerator_Multi newFG(numSamples, function, baseFrequency, initPhase, initLevel, multiprecisionBits);
+                while (currentLine != "Dependency ModOuts:") {
+                    std::string modInName;
+                    int modInId;
+                    int modOutId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                           semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modInArrayMapMulti.insert({modInId, newFG.modInNameToArray(modInName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+                while (getline(jobFile, currentLine) && currentLine != "Module:") {
+                    std::string modOutName;
+                    int modOutId;
+                    int modInId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modOutArrayMapMulti.insert({modOutId, newFG.modOutNameToArray(modOutName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+            } else {
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string baseFrequency = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                Function function = functionStringToFunction(data.substr(static_cast<std::string::size_type>(1)));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initPhase = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                FunctionGenerator_Double newFG(numSamples, function, baseFrequency, initPhase, initLevel);
+                while (currentLine != "Dependency ModOuts:") {
+                    std::string modInName;
+                    int modInId;
+                    int modOutId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                           semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modInArrayMapDouble.insert({modInId, newFG.modInNameToArray(modInName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+                while (getline(jobFile, currentLine) && currentLine != "Module:") {
+                    std::string modOutName;
+                    int modOutId;
+                    int modInId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modOutArrayMapDouble.insert({modOutId, newFG.modOutNameToArray(modOutName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+            }
+        }
+        if (data == "Delay") {
+            if (isMultiprecision) {
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initTime = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initFeedback = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                Delay_Multi newDelay(numSamples, initTime, initFeedback, initLevel, multiprecisionBits);
+                while (currentLine != "Dependency ModOuts:") {
+                    std::string modInName;
+                    int modInId;
+                    int modOutId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                           semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modInArrayMapMulti.insert({modInId, newDelay.modInNameToArray(modInName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+                while (getline(jobFile, currentLine) && currentLine != "Module:") {
+                    std::string modOutName;
+                    int modOutId;
+                    int modInId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modOutArrayMapMulti.insert({modOutId, newDelay.modOutNameToArray(modOutName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+            } else {
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initTime = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initFeedback = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                data = stripDataLabel(currentLine);
+                std::string initLevel = data.substr(static_cast<std::string::size_type>(1));
+                getline(jobFile, currentLine);
+                getline(jobFile, currentLine);
+                Delay_Double newDelay(numSamples, initTime, initFeedback, initLevel);
+                while (currentLine != "Dependency ModOuts:") {
+                    std::string modInName;
+                    int modInId;
+                    int modOutId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modInName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modInId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                           semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modOutId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modInArrayMapDouble.insert({modInId, newDelay.modInNameToArray(modInName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+                while (getline(jobFile, currentLine) && currentLine != "Module:") {
+                    std::string modOutName;
+                    int modOutId;
+                    int modInId;
+                    std::string::size_type colonIndex;
+                    std::string::size_type semicolonIndex;
+                    getline(jobFile, currentLine);
+                    colonIndex = currentLine.find(':');
+                    semicolonIndex = currentLine.find(';');
+                    modOutName = currentLine.substr(static_cast<std::string::size_type>(0), colonIndex);
+                    modOutId = std::stoi(currentLine.substr(colonIndex + static_cast<std::string::size_type>(2),
+                                                            semicolonIndex - colonIndex - static_cast<std::string::size_type>(2)));
+                    modInId = std::stoi(currentLine.substr(semicolonIndex + static_cast<std::string::size_type>(2)));
+                    modOutArrayMapDouble.insert({modOutId, newDelay.modOutNameToArray(modOutName)});
+                    modConnectionMap.insert({modInId, modOutId});
+                }
+            }
+        }
+    }
+              
+    /* mpfr_free_cache (); IF MPFR IS USED? */
+}
+
+int main(void)
+{
+    processJob(5);
+    return 0;
+}
