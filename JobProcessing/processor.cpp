@@ -407,7 +407,8 @@ void processJob(int jobId)
     getline(jobFile,currentLine);
     while(getline(jobFile, currentLine)) {
         data = stripDataLabel(currentLine);
-        if (data == " FunctionGenerator") {
+        data = data.substr(static_cast<std::string::size_type>(1));
+        if (data == "FunctionGenerator") {
             getline(jobFile, currentLine);
             getline(jobFile, currentLine);
             data = stripDataLabel(currentLine);
@@ -488,7 +489,7 @@ void processJob(int jobId)
                 }
             }
         }
-        if (data == " Delay") {
+        if (data == "Delay") {
             getline(jobFile, currentLine);
             getline(jobFile, currentLine);
             data = stripDataLabel(currentLine);
