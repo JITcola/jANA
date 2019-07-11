@@ -5,6 +5,10 @@
 #include <fstream>
 #include <utility>
 
+std::string stripDataLabel(std::string line, bool shift = 0);
+std::string chompLine(std::ifstream& streamIn, bool shift = 0);
+std::vector<int> intListToVector(std::string data);
+
 EvaluatorTemplate JobFileReader::readJobFile(int jobId)
 {
     std::string currentLine;
@@ -17,73 +21,64 @@ EvaluatorTemplate JobFileReader::readJobFile(int jobId)
     std::vector<int> modOutDependencyIds;
     std::vector<int> modOutProductIds;
 
-    std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
+    EvaluatorTemplate result;
 
+    std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
     getline(jobFile, currentLine);
     
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    precision = data == " double" ? "double" : "multiprecision";
+    data = chompLine(jobFile, true);
+    precision = data;
 
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
+    data = chompLine(jobFile);
     multiprecisionBits = std::stoi(data);
 
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
+    data = chompLine(jobFile);
     sampleRate = std::stoi(data);
 
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
+    data = chompLine(jobFile);
     renderLength = std::stoi(data);
 
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
+    data = chompLine(jobFile);
+    modOutDependencyIds = intListToVector(data);
+
+    data = chompLine(jobFile);
+    modOutProductIds = intListToVector(data);
+
+    jobFile.close();
+    return result;
+}
+
+std::string stripDataLabel(std::string line, bool shift)
+{
+    return line.substr(line.find(": ") + static_cast<std::string::size_type>(1) +
+           shift ? static_cast<std::string::size_type>(1) :
+                   static_cast<std::string::size_type>(0));
+}
+
+std::string chompLine(std::ifstream& streamIn, bool shift)
+{
+    std::string line;
+    getline(streamIn, line);
+    return stripDataLabel(line, shift);
+}
+
+std::vector<int> intListToVector(std::string data)
+{
+    std::vector<int> result;
     if (data != " ") {
         if (data.find(',') == std::string::npos)
-            modOutDependencyIds.push_back(std::stoi(data));
+            result.push_back(std::stoi(data));
         else {
             auto nextCommaIndex = data.find(',');
             while (nextCommaIndex != std::string::npos) {
-                modOutDependencyIds.push_back(std::stoi(data.substr(
+                result.push_back(std::stoi(data.substr(
                     static_cast<std::string::size_type>(0), nextCommaIndex)));
                 data = data.substr(nextCommaIndex + 
                     static_cast<std::string::size_type>(1));
                 nextCommaIndex = data.find(',');
             }
-            modOutDependencyIds.push_back(std::stoi(data));
+            result.push_back(std::stoi(data));
         }
     }
-
-    getline(jobFile, currentLine);
-    data = stripDataLabel(currentLine);
-    if (data != " ") {
-        if (data.find(',') == std::string::npos)
-            modOutProductIds.push_back(std::stoi(data));
-        else {
-            auto nextCommaIndex = data.find(',');
-            while (nextCommaIndex != std::string::npos) {
-                modOutProductIds.push_back(std::stoi(data.substr(
-                    static_cast<std::string::size_type(0), nextCommaIndex)));
-                data = data.substr(nextCommaIndex +
-                    static_cast<std::string::size_type>(1));
-                nextCommaIndex = data.find(',');
-            }
-            modOutProductIds.push_back(std::stoi(data));
-        }
-    }
-
-    JobInfo jobInfo;
-
-            
-
-
-
-
-
-}
-
-std::string stripDataLabel(std::string line)
-{
-    return line.substr(line.find(": ") + static_cast<std::string::size_type>(1));
+    return result;
 }

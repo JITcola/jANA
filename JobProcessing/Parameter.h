@@ -5,7 +5,7 @@
 
 #include "SampleValue.h"
 
-class Paramter {
+class Parameter {
 public:
     std::string name;
     SampleValue value;
