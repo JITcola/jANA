@@ -582,6 +582,16 @@ void processJob(int jobId)
             }
         }
     }
+    
+    std::cout << "***************** TEST *****************" << std::endl;
+    std::cout << moduleVectorDouble[0]->modInNameToArray("frequency") << " ?= "
+              << modInArrayMapDouble[26] << std::endl;
+    std::cout << moduleVectorDouble[0]->modInNameToArray("phase") << " ?= "
+              << modInArrayMapDouble[27] << std::endl;
+    std::cout << moduleVectorDouble[0]->modOutNameToArray("mainOut") << " ?= "
+              << modOutArrayMapDouble[28] << std::endl;
+    std::cout << moduleVectorDouble[0]->modOutNameToArray("auxOut1") << " ?= "
+              << modOutArrayMapDouble[29] << std::endl;
               
     mpfr_free_cache ();
 }
