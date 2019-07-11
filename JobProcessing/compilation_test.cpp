@@ -2,24 +2,24 @@
 #include <string>
 
 #include "JobInfo.h"
-#include "ModuleRecord.h"
-#include "EvaluatorTemplate.h"
-#include "SampleValue.h"
-
-using namespace std::literals::string_literals;
 
 int main(void)
 {
-    JobInfo jobInfo;
-    ModuleRecord moduleRecord;
-    EvaluatorTemplate evaluatorTemplate;
-    SampleValue sampleValue1;
-    SampleValue sampleValue2(2.718);
-    SampleValue sampleValue3(true, 256);
-    SampleValue sampleValue4(true, 1024, "2.718"s);
-    
-    mpfr_free_cache ();
-    std::cout << "Compilation successful" << std::endl;
+    std::string precision {"test"};
+    int multiprecisionBits {0};
+    int sampleRate {10};
+    int renderLength {2};
+    std::vector<int> modOutDependencyIds;
+    modOutDependencyIds.push_back(0);
+    std::vector<int> modOutProductIds;
+    modOutProductIds.push_back(0);
+    JobInfo jobInfo(precision, multiprecisionBits, sampleRate,
+                    renderLength, modOutDependencyIds,
+                    modOutProductIds);
+    std::cout << jobInfo.precision << "\n" << jobInfo.multiprecisionBits << "\n"
+              << jobInfo.sampleRate << "\n" << jobInfo.renderLength << "\n"
+              << jobInfo.numberOfSamples << "\n" << jobInfo.modOutDependencyIds[0] << "\n"
+              << jobInfo.modOutProductIds[0] << std::endl;
 
     return 0;
 }

@@ -11,8 +11,12 @@ public:
     int sampleRate;
     int renderLength;
     long int numberOfSamples;
-    std::vector<int> jobModOutDependencyIds;
-    std::vector<int> jobModOutProductIds;
+    std::vector<int> modOutDependencyIds;
+    std::vector<int> modOutProductIds;
+
+    JobInfo(std::string precision, int multiprecisionBits, int sampleRate,
+            int renderLength, std::vector<int> modOutDependencyIds, 
+            std::vector<int> modOutProductIds);
 };
 
 #endif
