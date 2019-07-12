@@ -20,8 +20,10 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
             result.time.push_back(SampleValue(true, jobInfo.multiprecisionBits)); 
         mpfr_t sampleNumber;
         mpfr_t sampleRate;
-        mpfr_init2 (sampleNumber, jobInfo.multiprecisionBits);
-        mpfr_init2 (sampleRate, jobInfo.multiprecisionBits);
+        mpfr_init2 (sampleNumber, 
+                    static_cast<mpfr_prec_t>(jobInfo.multiprecisionBits));
+        mpfr_init2 (sampleRate, 
+                    static_cast<mpfr_prec_t>(jobInfo.multiprecisionBits));
         mpfr_set_si (sampleRate, 
                      static_cast<long int>(jobInfo.sampleRate),
                      MPFR_RNDN);
