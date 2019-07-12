@@ -1,6 +1,5 @@
 #include "JobFileReader.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -19,37 +18,17 @@ std::vector<std::pair<std::pair<std::string, int>, int>>
 EvaluatorTemplate JobFileReader::readJobFile(int jobId)
 {
     std::string currentLine;
-    std::string data;
-    int id {jobId};
-    std::string precision;
-    int multiprecisionBits;
-    int sampleRate;
-    int renderLength;
-    std::vector<int> modOutDependencyIds;
-    std::vector<int> modOutProductIds;
-
     EvaluatorTemplate result;
 
     std::ifstream jobFile {"Job" + std::to_string(jobId) + ".job"};
     getline(jobFile, currentLine);
     
-    data = chompLine(jobFile, true);
-    precision = data;
-
-    data = chompLine(jobFile);
-    multiprecisionBits = std::stoi(data);
-
-    data = chompLine(jobFile);
-    sampleRate = std::stoi(data);
-
-    data = chompLine(jobFile);
-    renderLength = std::stoi(data);
-
-    data = chompLine(jobFile);
-    modOutDependencyIds = intListToVector(data);
-
-    data = chompLine(jobFile);
-    modOutProductIds = intListToVector(data);
+    std::string precision = chompLine(jobFile, true);
+    int multiprecisionBits = std::stoi(chompLine(jobFile));
+    int sampleRate = std::stoi(chompLine(jobFile));
+    int renderLength = std::stoi(chompLine(jobFile));
+    std::vector<int> modOutDependencyIds = intListToVector(chompLine(jobFile));
+    std::vector<int> modOutProductIds = intListToVector(chompLine(jobFile));
 
     JobInfo resultJobInfo(precision, multiprecisionBits, sampleRate, 
                           renderLength, modOutDependencyIds,
