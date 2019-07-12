@@ -24,7 +24,7 @@ int main(void)
         std::cout << "***" << std::endl;
     }
 
-    mpfr_out_str (stdout, 10, 0, evaluator.time[44100].multiValue, MPFR_RNDN);
+    mpfr_out_str (stdout, 10, 0, evaluator.time[88200].multiValue, MPFR_RNDN);
 
     return 0;
 }

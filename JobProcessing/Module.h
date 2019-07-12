@@ -17,7 +17,7 @@ public:
     std::vector<ModIn> modIns;
     std::vector<ModOut> modOuts;
 
-    void computeNextSample(void);
+    virtual void computeNextSample(void) = 0;
     SampleValue getParameterValue(std::string parameterName);
 };
 
