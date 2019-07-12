@@ -10,7 +10,7 @@
 
 class Evaluator {
 public:
-    std::vector<Module> modules;
+    std::vector<Module*> modulePtrs;
     long int currentSample;
     std::vector<SampleValue> time;
     std::map<int, ModOut> modOutDependencyRecords;
