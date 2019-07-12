@@ -37,10 +37,8 @@ EvaluatorTemplate JobFileReader::readJobFile(int jobId)
 
     std::vector<ModuleRecord> resultModuleRecords;
     getline(jobFile, currentLine);
-    while(jobFile) {
-        ModuleRecord newModuleRecord = processModuleInfo(jobFile);
-        resultModuleRecords.push_back(newModuleRecord);
-    }
+    while(jobFile)
+        resultModuleRecords.push_back(processModuleInfo(jobFile));
     result.moduleRecords = resultModuleRecords;
 
     jobFile.close();
