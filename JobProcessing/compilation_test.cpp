@@ -7,7 +7,7 @@
 int main(void)
 {
     JobFileReader reader;
-    EvaluatorTemplate template;
-    template = reader.readJobFile(2);
+    EvaluatorTemplate evaluatorTemplate;
+    evaluatorTemplate = reader.readJobFile(5);
     return 0;
 }

@@ -1,5 +1,6 @@
 #include "JobFileReader.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
@@ -50,9 +51,10 @@ EvaluatorTemplate JobFileReader::readJobFile(int jobId)
 
 std::string stripDataLabel(std::string line, bool shift)
 {
-    return line.substr(line.find(": ") + static_cast<std::string::size_type>(1) +
-           shift ? static_cast<std::string::size_type>(1) :
-                   static_cast<std::string::size_type>(0));
+    auto colonIndex = line.find(": ");
+    auto offset = shift ? static_cast<std::string::size_type>(2)
+                        : static_cast<std::string::size_type>(1);
+    return line.substr(colonIndex + offset);
 }
 
 std::string chompLine(std::ifstream& streamIn, bool shift)

@@ -3,13 +3,14 @@
 
 #include <vector>
 
-#include "Module.h"
 #include "SampleValue.h"
+
+class Module;
 
 class ModOut {
 public:
     bool isComputed;
-    Module parentModule;
+    Module& parentModule;
     std::vector<SampleValue> samples;
 
     void computeNextSample(void);

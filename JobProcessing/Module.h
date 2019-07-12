@@ -3,15 +3,16 @@
 
 #include <vector>
 
-#include "Evaluator.h"
 #include "Parameter.h"
 #include "ModIn.h"
 #include "ModOut.h"
 #include "SampleValue.h"
 
+class Evaluator;
+
 class Module {
 public:
-    Evaluator parentEvaluator;
+    Evaluator& parentEvaluator;
     std::vector<Parameter> parameters;
     std::vector<ModIn> modIns;
     std::vector<ModOut> modOuts;
