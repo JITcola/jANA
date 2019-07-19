@@ -10,6 +10,8 @@
 
 class Evaluator {
 public:
+    bool isMultiprecision;
+    int multiprecisionBits;
     std::vector<Module*> modulePtrs;
     long int currentSample;
     std::vector<SampleValue> time;
@@ -17,7 +19,9 @@ public:
     std::map<int, ModOut> modOutProductRecords;
 
     void evaluate(void);
-    void computeNextSample(void);
+
+private:
+    void computeNextSample(SampleValue sampleValue);
     void freeResources(void);
 };
 

@@ -9,6 +9,8 @@ class Parameter {
 public:
     std::string name;
     SampleValue value;
+    Parameter(std::string name, std::string valueString,
+              bool isMultiprecision, int precision);
 };
 
 #endif

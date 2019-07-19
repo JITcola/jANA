@@ -1,14 +1,21 @@
 #include "EvaluatorTemplate.h"
 
+#include <vector>
 #include <iostream>
 #include <cstdio>
 #include <gmp.h>
 #include <mpfr.h>
 
+#include "ModOut.h"
+
 Evaluator EvaluatorTemplate::createEvaluator(void)
 {
     Evaluator result;
+    result.isMultiprecision = jobInfo.precision == "double" ? false : true;
+    result.multiprecisionBits = jobInfo.multiprecisionBits;
     result.currentSample = static_cast<long int>(0);
+    
+    /* Initialize time vector. */
     if (jobInfo.precision == "double")
         for (long int i = 0; i < jobInfo.numberOfSamples; ++i) {
             double time = static_cast<double>(i) / 
@@ -35,7 +42,19 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
         mpfr_clear (sampleNumber);
         mpfr_clear (sampleRate);
     }
+
+    /* Import ModOut dependencies. */
+    std::vector<ModOut> modOutDependencies;
+    for (int id: jobInfo.modOutDependencyIds) {
+        ModOut newModOut = modOutFromId(id);
+        modOutDependencies.push_back(newModOut);
+        result.modOutDependencyRecords.insert({id, modOutDependencies.back()});
+    }
+
     return result;
 }
 
-
+ModOut EvaluatorTemplate::modOutFromId(int id)
+{
+    return ModOut {};
+}

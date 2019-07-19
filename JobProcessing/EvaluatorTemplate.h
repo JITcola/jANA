@@ -6,6 +6,7 @@
 #include "ModuleRecord.h"
 #include "JobInfo.h"
 #include "Evaluator.h"
+#include "ModOut.h"
 
 class EvaluatorTemplate {
 public:
@@ -13,6 +14,9 @@ public:
     JobInfo jobInfo;
 
     Evaluator createEvaluator(void);
+
+private:
+    ModOut modOutFromId(int id);
 };
 
 #endif

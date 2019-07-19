@@ -11,6 +11,7 @@ class ModOut {
 public:
     bool isComputed;
     Module& parentModule;
+    Algorithm algorithm;
     std::vector<SampleValue> samples;
 
     void computeNextSample(void);
