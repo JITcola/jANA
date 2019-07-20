@@ -1,14 +1,13 @@
-#ifndef FUNCTIONGENERATOR_H
-#define FUNCTIONGENERATOR_H
+#ifndef DELAY_H
+#define DELAY_H
 
 #include "Module.h"
 #include "ModuleRecord.h"
 
-class FunctionGenerator : public Module {
+class Delay : public Module {
 public:
     void computeNextSample();
-
-    FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
+    Delay(bool isMultiprecision, int multiprecisionBits,
                       std::vector<SampleValue>& time, ModuleRecord& moduleRecord);
 };
 

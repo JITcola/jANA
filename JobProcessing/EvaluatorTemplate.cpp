@@ -4,12 +4,15 @@
 #include <vector>
 #include <map>
 #include <iostream>
+#include <memory>
 #include <cstdio>
 #include <gmp.h>
 #include <mpfr.h>
 
 #include "ModOut.h"
 #include "ModuleType.h"
+#include "FunctionGenerator.h"
+#include "Delay.h"
 
 Evaluator EvaluatorTemplate::createEvaluator(void)
 {
@@ -57,11 +60,13 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
         modOutIdMap.insert({id, result.modOutDependencies.back()});
     }
 
-    /* Create modules. */
+    /* Create modules and register ModIns, ModOuts, modInToModOutMap info. */
     for (ModuleRecord& moduleRecord: moduleRecords) {
-        switch(moduleTypeFromString(moduleRecord.moduleType)) {
-
+        for (auto& parameter: moduleRecord.parameters) {
+            std::cout << parameter.first << " * "
+                      << parameter.second << std::endl;
         }
+        std::cout << "***" << std::endl;
     }
     return result;
 }

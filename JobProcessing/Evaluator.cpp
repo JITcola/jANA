@@ -1,5 +1,6 @@
 #include "Evaluator.h"
 
+#include <memory>
 #include <cstdio>
 #include <gmp.h>
 #include <mpfr.h>
@@ -14,7 +15,7 @@ void Evaluator::evaluate(void)
 
 void Evaluator::computeNextSample()
 {
-    for (Module* modulePtr: modulePtrs)
+    for (std::unique_ptr<Module>& modulePtr: modulePtrs)
         modulePtr->computeNextSample();
 }
 
