@@ -1,5 +1,6 @@
 #include "EvaluatorTemplate.h"
 
+#include <string>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -8,6 +9,7 @@
 #include <mpfr.h>
 
 #include "ModOut.h"
+#include "ModuleType.h"
 
 Evaluator EvaluatorTemplate::createEvaluator(void)
 {
@@ -50,16 +52,32 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
     std::map<int, int> modInToModOutMap;
 
     /* Import ModOut dependencies. */
-    std::vector<ModOut> modOutDependencies;
     for (int id: jobInfo.modOutDependencyIds) {
-        modOutDependencies.push_back(modOutFromId(id));
-        modOutIdMap.insert({id, modOutDependencies.back()});
+        result.modOutDependencies.push_back(modOutFromId(id));
+        modOutIdMap.insert({id, result.modOutDependencies.back()});
     }
 
+    /* Create modules. */
+    for (ModuleRecord& moduleRecord: moduleRecords) {
+        switch(moduleTypeFromString(moduleRecord.moduleType)) {
+
+        }
+    }
     return result;
 }
 
 ModOut EvaluatorTemplate::modOutFromId(int id)
 {
-    return ModOut {};
+    return ModOut {}; // TODO: actually create ModOuts from files
+}
+
+ModuleType EvaluatorTemplate::moduleTypeFromString
+    (std::string moduleTypeString)
+{
+    if (moduleTypeString == "FunctionGenerator")
+        return ModuleType::FunctionGenerator;
+    else if (moduleTypeString == "Delay")
+        return ModuleType::Delay;
+    else
+        return ModuleType::NullModuleType;
 }

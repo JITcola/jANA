@@ -2,11 +2,13 @@
 #define EVALUATORTEMPLATE_H
 
 #include <vector>
+#include <string>
 
 #include "ModuleRecord.h"
 #include "JobInfo.h"
 #include "Evaluator.h"
 #include "ModOut.h"
+#include "ModuleType.h"
 
 class EvaluatorTemplate {
 public:
@@ -17,6 +19,7 @@ public:
 
 private:
     ModOut modOutFromId(int id);
+    ModuleType moduleTypeFromString(std::string moduleTypeString);
 };
 
 #endif

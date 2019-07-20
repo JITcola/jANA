@@ -12,11 +12,12 @@ public:
     std::vector<std::pair<std::pair<std::string, int>, int>> dependencies;
     ModuleRecord() = default;
     ModuleRecord(std::string moduleType,
-        std::vector<std::pair<std::string, std::string>> parameters,
-        std::vector<std::pair<std::pair<std::string, int>, int>>
-        dependencies)
+                 std::vector<std::pair<std::string, std::string>> parameters,
+                 std::vector<std::pair<std::pair<std::string, int>, int>>
+                 dependencies)
         : moduleType {moduleType}, parameters {parameters},
           dependencies {dependencies} { }
+
 };
 
 #endif
