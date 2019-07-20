@@ -1,8 +1,16 @@
 #include "FunctionGenerator.h"
 
-void FunctionGenerator::computeNextSample(SampleValue currentSample)
+void FunctionGenerator::computeNextSample()
 {
-    for (ModOut modOut: modOuts)
-        if (modOut.isComputed)
-            modOut.computeNextSample(currentSample);
+    return;
 }
+
+FunctionGenerator::FunctionGenerator(bool isMultiprecision, 
+                                     int multiprecisionBits,
+                                     std::vector<SampleValue>& time,
+                                     ModuleRecord& moduleRecord)
+    : Module(isMultiprecision, multiprecisionBits, time, moduleRecord)
+{
+
+}
+    

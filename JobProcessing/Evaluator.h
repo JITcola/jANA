@@ -15,14 +15,14 @@ public:
     std::vector<Module*> modulePtrs;
     long int currentSample;
     std::vector<SampleValue> time;
-    std::map<int, ModOut> modOutDependencyRecords;
-    std::map<int, ModOut> modOutProductRecords;
+    std::vector<ModOut> modOutDependencies;
 
     void evaluate(void);
 
 private:
-    void computeNextSample(SampleValue sampleValue);
+    void computeNextSample();
     void freeResources(void);
+    void exportModOutProducts(void);
 };
 
 #endif

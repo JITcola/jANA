@@ -1,6 +1,7 @@
 #include "EvaluatorTemplate.h"
 
 #include <vector>
+#include <map>
 #include <iostream>
 #include <cstdio>
 #include <gmp.h>
@@ -43,12 +44,16 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
         mpfr_clear (sampleRate);
     }
 
+    /* Create modulation map. */
+    std::map<int, ModIn> modInIdMap;
+    std::map<int, ModOut> modOutIdMap;
+    std::map<int, int> modInToModOutMap;
+
     /* Import ModOut dependencies. */
     std::vector<ModOut> modOutDependencies;
     for (int id: jobInfo.modOutDependencyIds) {
-        ModOut newModOut = modOutFromId(id);
-        modOutDependencies.push_back(newModOut);
-        result.modOutDependencyRecords.insert({id, modOutDependencies.back()});
+        modOutDependencies.push_back(modOutFromId(id));
+        modOutIdMap.insert({id, modOutDependencies.back()});
     }
 
     return result;

@@ -4,12 +4,15 @@
 #include "Evaluator.h"
 #include "ModuleRecord.h"
 
-Module::Module(Evaluator& parentEvaluator, ModuleRecord& moduleRecord)
+Module::Module(bool isMultiprecision, int multiprecisionBits, 
+               std::vector<SampleValue>& time, ModuleRecord& moduleRecord)
+    : isMultiprecision{isMultiprecision}, multiprecisionBits{multiprecisionBits}, 
+      time{time}
 {
-    this.parentEvaluator = parentEvaluator;
     for (std::pair<std::string, std::string> parameterRecord: moduleRecord.parameters) {
         Parameter newParameter {parameterRecord.first, parameterRecord.second,
-                               bool isMultiprecision, int precision};
+                                this->isMultiprecision,
+                                this->multiprecisionBits};
         parameters.push_back(newParameter);
     }
 }

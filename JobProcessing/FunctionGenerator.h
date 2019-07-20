@@ -3,9 +3,13 @@
 
 #include "Module.h"
 #include "ModuleRecord.h"
+#include "Evaluator.h"
 
 class FunctionGenerator : public Module {
 public:
-    void computeNextSample(SampleValue currentSample);
-    FunctionGenerator(ModuleRecord record);
+    void computeNextSample();
+    FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
+                      std::vector<SampleValue>& time, ModuleRecord& moduleRecord);
 };
+
+#endif

@@ -6,17 +6,24 @@
 
 void Evaluator::evaluate(void)
 {
-    for (SampleValue currentSample: time)
-        computeNextSample(currentSample);
+    for (long int i = 0; i < time.size(); ++i)
+        computeNextSample();
+    freeResources();
+    exportModOutProducts();
 }
 
-void Evaluator::computeNextSample(SampleValue currentSample)
+void Evaluator::computeNextSample()
 {
     for (Module* modulePtr: modulePtrs)
-        modulePtr->computeNextSample(currentSample);
+        modulePtr->computeNextSample();
 }
 
 void Evaluator::freeResources(void)
 {
     mpfr_free_cache ();
+}
+
+void Evaluator::exportModOutProducts(void)
+{
+    return;
 }

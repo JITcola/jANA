@@ -7,18 +7,24 @@
 #include "ModIn.h"
 #include "ModOut.h"
 #include "SampleValue.h"
+#include "ModuleRecord.h"
 
 class Evaluator;
 
 class Module {
 public:
-    Evaluator& parentEvaluator;
+    bool isMultiprecision;
+    int multiprecisionBits;
+    std::vector<SampleValue>& time;
     std::vector<Parameter> parameters;
     std::vector<ModIn> modIns;
     std::vector<ModOut> modOuts;
 
-    virtual void computeNextSample(SampleValue currentSample) = 0;
+    virtual void computeNextSample(void) = 0;
     SampleValue getParameterValue(std::string parameterName);
+
+    Module(bool isMultiprecision, int multiprecisionBits,
+           std::vector<SampleValue>& time, ModuleRecord& moduleRecord);
 };
 
 #endif
