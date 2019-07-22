@@ -13,7 +13,7 @@ public:
     SampleValueParameter initPhase;
     SampleValueParameter initLevel;
 
-    void computeNextSample();
+    void computeNextSample() { return; }
 
     FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
                       std::vector<SampleValue>& time, 

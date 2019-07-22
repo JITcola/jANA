@@ -7,13 +7,20 @@
 
 class Delay : public Module {
 public:
-//    SampleValueParameter initTime;
-//    SampleValueParameter initFeedback;
-//    SampleValueParameter initLevel;
+    SampleValueParameter initTime;
+    SampleValueParameter initFeedback;
+    SampleValueParameter initLevel;
 
-    void computeNextSample();
-    Delay(bool isMultiprecision, int multiprecisionBits,
-                      std::vector<SampleValue>& time, ModuleRecord& moduleRecord);
+    void computeNextSample() { return; }
+    Delay(bool isMultiprecision, 
+          int multiprecisionBits,
+          std::vector<SampleValue>& time, 
+          ModuleRecord& moduleRecord)
+        : Module(isMultiprecision, multiprecisionBits, time),
+          initTime {moduleRecord.getSampleValueParameter("initTime")},
+          initFeedback {moduleRecord.getSampleValueParameter("initFeedback")},
+          initLevel {moduleRecord.getSampleValueParameter("initLevel")}
+    {}
 };
 
 #endif
