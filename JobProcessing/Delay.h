@@ -7,9 +7,9 @@
 
 class Delay : public Module {
 public:
-    SampleValueParameter initTime;
-    SampleValueParameter initFeedback;
-    SampleValueParameter initLevel;
+//    SampleValueParameter initTime;
+//    SampleValueParameter initFeedback;
+//    SampleValueParameter initLevel;
 
     void computeNextSample();
     Delay(bool isMultiprecision, int multiprecisionBits,

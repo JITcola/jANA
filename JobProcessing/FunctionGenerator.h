@@ -16,7 +16,16 @@ public:
     void computeNextSample();
 
     FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
-                      std::vector<SampleValue>& time, ModuleRecord& moduleRecord);
+                      std::vector<SampleValue>& time, 
+                      ModuleRecord& moduleRecord)
+        : Module(isMultiprecision, multiprecisionBits, time),
+          baseFrequency {
+              moduleRecord.getSampleValueParameter("baseFrequency")
+          },
+          function {moduleRecord.getOptionParameter("function")},
+          initPhase {moduleRecord.getSampleValueParameter("initPhase")},
+          initLevel {moduleRecord.getSampleValueParameter("initLevel")}
+    {}
 };
 
 #endif

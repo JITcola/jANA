@@ -11,6 +11,7 @@ Delay::Delay(bool isMultiprecision, int multiprecisionBits,
              std::vector<SampleValue>& time, ModuleRecord& moduleRecord)
     : Module(isMultiprecision, multiprecisionBits, time)
 {
+    /*
     for (auto parameter: moduleRecord.parameters) {
         if (parameter.first == "initTime") {
             if (isMultiprecision) {
@@ -49,4 +50,5 @@ Delay::Delay(bool isMultiprecision, int multiprecisionBits,
         } else
             std::cerr << "Invalid input to Delay constructor." << std::endl;
     }
+    */
 }

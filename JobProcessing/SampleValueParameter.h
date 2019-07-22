@@ -10,16 +10,22 @@ class SampleValueParameter : public Parameter {
 public:
     SampleValue value;
 
-    SampleValueParameter();
+    SampleValueParameter() = default;
     SampleValueParameter(const SampleValueParameter& sampleValueParameter)
-        : value {sampleValueParameter.value} {}
-    SampleValueParameter(std::string name, double doubleValue);
+        : Parameter(sampleValueParameter.name), 
+          value {sampleValueParameter.value} {}
+    SampleValueParameter(std::string name, double doubleValue)
+        : Parameter(name), value {doubleValue} {}
     SampleValueParameter(std::string name, bool isMultiprecision,
-                         int precision);
+                         int precision)
+        : Parameter(name),
+          value {isMultiprecision, precision} {}
     SampleValueParameter(std::string name, 
                          bool isMultiprecision,
                          int precision, 
-                         std::string valueString);
+                         std::string valueString)
+        : Parameter(name),
+          value {isMultiprecision, precision, valueString} {}
 };
 
 #endif

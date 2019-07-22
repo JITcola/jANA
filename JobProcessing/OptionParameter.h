@@ -11,7 +11,8 @@ public:
 
     OptionParameter();
     OptionParameter(std::string name, std::string value)
-        : Parameter(name) { this->value = value; }
+        : Parameter(name), 
+          value {value} {}
 };
 
 #endif

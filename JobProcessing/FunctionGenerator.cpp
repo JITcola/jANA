@@ -7,7 +7,7 @@ void FunctionGenerator::computeNextSample()
 {
     return;
 }
-
+/*
 FunctionGenerator::FunctionGenerator(bool isMultiprecision, 
                                      int multiprecisionBits,
                                      std::vector<SampleValue>& time,
@@ -58,3 +58,4 @@ FunctionGenerator::FunctionGenerator(bool isMultiprecision,
             std::cerr << "Invalid input to FunctionGenerator constructor." << std::endl;
     }
 }
+*/
