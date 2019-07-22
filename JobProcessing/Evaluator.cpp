@@ -15,7 +15,7 @@ void Evaluator::evaluate(void)
 
 void Evaluator::computeNextSample()
 {
-    for (std::unique_ptr<Module>& modulePtr: modulePtrs)
+    for (std::shared_ptr<Module>& modulePtr: modulePtrs)
         modulePtr->computeNextSample();
 }
 

@@ -10,6 +10,7 @@
 #include <mpfr.h>
 
 #include "ModOut.h"
+#include "Module.h"
 #include "ModuleType.h"
 #include "FunctionGenerator.h"
 #include "Delay.h"
@@ -62,27 +63,37 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
 
     /* Create modules and register ModIns, ModOuts, modInToModOutMap info. */
     for (ModuleRecord& moduleRecord: moduleRecords) {
-        for (auto& parameter: moduleRecord.parameters) {
-            std::cout << parameter.first << " * "
-                      << parameter.second << std::endl;
-        }
-        std::cout << "***" << std::endl;
+        if (Module::moduleTypeFromString(moduleRecord.moduleType) ==
+            ModuleType::FunctionGenerator) {
+            auto newFunctionGeneratorPtr {
+                std::make_shared<FunctionGenerator>(
+                    result.isMultiprecision,
+                    result.multiprecisionBits,
+                    result.time,
+                    moduleRecord
+                )
+            };
+            result.modulePtrs.push_back(newFunctionGeneratorPtr);
+        } else if (Module::moduleTypeFromString(moduleRecord.moduleType) ==
+                   ModuleType::Delay) {
+            auto newDelayPtr {
+                std::make_shared<Delay>(
+                    result.isMultiprecision,
+                    result.multiprecisionBits,
+                    result.time,
+                    moduleRecord
+                 )
+             };
+             result.modulePtrs.push_back(newDelayPtr);
+         } else 
+             std::cerr << "Failed to create modulePtrs." << std::endl;
+             
     }
+    
     return result;
 }
 
 ModOut EvaluatorTemplate::modOutFromId(int id)
 {
     return ModOut {}; // TODO: actually create ModOuts from files
-}
-
-ModuleType EvaluatorTemplate::moduleTypeFromString
-    (std::string moduleTypeString)
-{
-    if (moduleTypeString == "FunctionGenerator")
-        return ModuleType::FunctionGenerator;
-    else if (moduleTypeString == "Delay")
-        return ModuleType::Delay;
-    else
-        return ModuleType::NullModuleType;
 }
