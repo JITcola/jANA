@@ -13,7 +13,7 @@ class Evaluator {
 public:
     bool isMultiprecision;
     int multiprecisionBits;
-    std::vector<std::shared_ptr<Module>> modulePtrs;
+    std::vector<std::unique_ptr<Module>> modulePtrs;
     long int currentSample;
     std::vector<SampleValue> time;
     std::vector<ModOut> modOutDependencies;

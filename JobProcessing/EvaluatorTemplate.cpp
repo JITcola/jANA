@@ -66,25 +66,25 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
         if (Module::moduleTypeFromString(moduleRecord.moduleType) ==
             ModuleType::FunctionGenerator) {
             auto newFunctionGeneratorPtr {
-                std::make_shared<FunctionGenerator>(
+                std::make_unique<FunctionGenerator>(
                     result.isMultiprecision,
                     result.multiprecisionBits,
                     result.time,
                     moduleRecord
                 )
             };
-            result.modulePtrs.push_back(newFunctionGeneratorPtr);
+            result.modulePtrs.push_back(std::move(newFunctionGeneratorPtr));
         } else if (Module::moduleTypeFromString(moduleRecord.moduleType) ==
                    ModuleType::Delay) {
             auto newDelayPtr {
-                std::make_shared<Delay>(
+                std::make_unique<Delay>(
                     result.isMultiprecision,
                     result.multiprecisionBits,
                     result.time,
                     moduleRecord
                  )
              };
-             result.modulePtrs.push_back(newDelayPtr);
+             result.modulePtrs.push_back(std::move(newDelayPtr));
          } else 
              std::cerr << "Failed to create modulePtrs." << std::endl;
              
