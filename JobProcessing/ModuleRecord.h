@@ -13,6 +13,7 @@ public:
     std::string moduleType;
     std::vector<std::pair<std::string, std::string>> parameters;
     std::vector<std::pair<std::pair<std::string, int>, int>> dependencies;
+    std::vector<std::pair<std::string, int>> products;
 
     SampleValueParameter getSampleValueParameter(
             std::string parameterName,
@@ -24,9 +25,10 @@ public:
     ModuleRecord(std::string moduleType,
                  std::vector<std::pair<std::string, std::string>> parameters,
                  std::vector<std::pair<std::pair<std::string, int>, int>>
-                 dependencies)
+                 dependencies,
+                 std::vector<std::pair<std::string, int>> products)
         : moduleType {moduleType}, parameters {parameters},
-          dependencies {dependencies} { }
+          dependencies {dependencies}, products {products} {}
 
 };
 

@@ -14,6 +14,8 @@ std::vector<std::pair<std::string, std::string>>
     processParameterInfo(std::ifstream& streamIn);
 std::vector<std::pair<std::pair<std::string, int>, int>>
     processDependencyInfo(std::ifstream& streamIn);
+std::vector<std::pair<std::string, int>>
+    processProductInfo(std::ifstream& streamIn);
 
 EvaluatorTemplate JobFileReader::readJobFile(int jobId)
 {
@@ -106,6 +108,7 @@ ModuleRecord processModuleInfo(std::ifstream& streamIn)
     getline(streamIn, line);
     result.parameters = processParameterInfo(streamIn);
     result.dependencies = processDependencyInfo(streamIn);
+    result.products = processProductInfo(streamIn);
     return result;
 }
 
@@ -127,20 +130,37 @@ processDependencyInfo(std::ifstream& streamIn)
 {
     std::vector<std::pair<std::pair<std::string, int>, int>> result;
     std::string line;
-    while (getline(streamIn, line) && line != "Module:") {
-        std::string parameterName;
-        int parameterId;
+    while (getline(streamIn, line) && line != "Computed ModOuts:") {
+        std::string modInName;
+        int modInId;
         int modulatorId;
         std::vector<std::string> linePieces = split(line, ':');
-        parameterName = linePieces[0];
+        modInName = linePieces[0];
         linePieces = split(linePieces[1], ';');
-        parameterId = std::stoi(linePieces[0].substr(
+        modInId = std::stoi(linePieces[0].substr(
                       static_cast<std::string::size_type>(1)));
         modulatorId = std::stoi(linePieces[1].substr(
                       static_cast<std::string::size_type>(1)));
         std::pair<std::string, int> dependencyInitialPart
-            {parameterName, parameterId};
+            {modInName, modInId};
        result.push_back({dependencyInitialPart, modulatorId});
+    }
+    return result;
+}
+
+std::vector<std::pair<std::string, int>>
+processProductInfo(std::ifstream& streamIn)
+{
+    std::vector<std::pair<std::string, int>> result;
+    std::string line;
+    while (getline(streamIn, line) && line != "Module:") {
+        std::string modOutName;
+        int modOutId;
+        std::vector<std::string> linePieces = split(line, ':');
+        modOutName = linePieces[0];
+        modOutId = std::stoi(linePieces[1].substr(
+                   static_cast<std::string::size_type>(1)));
+        result.push_back({modOutName, modOutId});
     }
     return result;
 }
