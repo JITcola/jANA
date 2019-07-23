@@ -105,6 +105,10 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
 
     /* Connect ModIns to ModOuts. */
 
+    for (auto modPair: modInToModOutMap)
+        (modInIdMap[modPair.first]).source =
+            &modOutIdMap[modPair.second];
+
     return result;
 }
 
