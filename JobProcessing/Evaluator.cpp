@@ -19,6 +19,10 @@
 
 Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
 {
+    modulePtrs.reserve(evaluatorTemplate.moduleRecords.size());
+    modOutDependencies.reserve(
+        evaluatorTemplate.jobInfo.modOutDependencyIds.size());
+
     isMultiprecision = 
         evaluatorTemplate.jobInfo.precision == "double" ? false : true;
     multiprecisionBits = evaluatorTemplate.jobInfo.multiprecisionBits;
@@ -63,8 +67,8 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
     }
 
     /* Create modulation map. */
-    std::map<int, ModIn> modInIdMap;
-    std::map<int, ModOut> modOutIdMap;
+    std::map<int, ModIn&> modInIdMap;
+    std::map<int, ModOut&> modOutIdMap;
     std::map<int, int> modInToModOutMap;
 
     /* Import ModOut dependencies. */
