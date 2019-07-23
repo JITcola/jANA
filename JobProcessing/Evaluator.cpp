@@ -67,14 +67,14 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
     }
 
     /* Create modulation map. */
-    std::map<int, ModIn&> modInIdMap;
-    std::map<int, ModOut&> modOutIdMap;
+    std::map<int, ModIn*> modInIdMap;
+    std::map<int, ModOut*> modOutIdMap;
     std::map<int, int> modInToModOutMap;
 
     /* Import ModOut dependencies. */
     for (int id: evaluatorTemplate.jobInfo.modOutDependencyIds) {
         modOutDependencies.push_back(modOutFromId(id));
-        modOutIdMap.insert({id, modOutDependencies.back()});
+        modOutIdMap.insert({id, &modOutDependencies.back()});
     }
 
     /* Create modules and register ModIns, ModOuts, modInToModOutMap info. */
@@ -104,16 +104,17 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
         } else 
              std::cerr << "Failed to create modulePtrs." << std::endl;
         for (auto dependency: moduleRecord.dependencies) {
-            modInIdMap[dependency.first.second] =
-                modulePtrs.back()->getModIn(
-                dependency.first.first);
-            modInToModOutMap[dependency.first.second] =
-                dependency.second;
+            modInIdMap.insert({
+                dependency.first.second, 
+                &(modulePtrs.back()->getModIn(dependency.first.first))});
+            modInToModOutMap.insert({
+                dependency.first.second, 
+                dependency.second});
         }
         for (auto product: moduleRecord.products) {
-            modOutIdMap[product.second] =
-                modulePtrs.back()->getModOut(
-                product.first);
+            modOutIdMap.insert({
+                product.second, 
+                &(modulePtrs.back()->getModOut(product.first))});
             (modulePtrs.back()->getModOut(
                 product.first)).isComputed = true;
         }
@@ -122,26 +123,8 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
     /* Connect ModIns to ModOuts. */
 
     for (auto modPair: modInToModOutMap)
-        modInIdMap[modPair.first].source =
-            &modOutIdMap[modPair.second];
-
-    /* DEBUG */
-
-    std::cout << "modulePtr modIn addresses:" << std::endl;
-
-    for (auto& modulePtr: modulePtrs) {
-        std::cout << &(modulePtr->getModIn("frequency")) << std::endl;
-        std::cout << &(modulePtr->getModIn("phase")) << std::endl;
-        std::cout << &(modulePtr->getModIn("level")) << std::endl;
-        std::cout << "***" << std::endl;
-    }
-
-    std::cout << "modInToModOutMap modIn addresses:" << std::endl;
-
-    for (auto modPair: modInToModOutMap)
-        std::cout << &modInIdMap[modPair.first] << std::endl;
-
-    /* DEBUG */
+        modInIdMap[modPair.first]->source =
+            modOutIdMap[modPair.second];
 
 }
 
