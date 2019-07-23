@@ -8,6 +8,7 @@
 #include "Module.h"
 #include "SampleValue.h"
 #include "ModOut.h"
+#include "EvaluatorTemplate.h"
 
 class Evaluator {
 public:
@@ -20,10 +21,14 @@ public:
 
     void evaluate(void);
 
+    Evaluator(EvaluatorTemplate evaluatorTemplate);
+
 private:
     void computeNextSample();
     void freeResources(void);
     void exportModOutProducts(void);
+
+    ModOut modOutFromId(int id);
 };
 
 #endif
