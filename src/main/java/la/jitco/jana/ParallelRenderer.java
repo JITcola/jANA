@@ -109,6 +109,11 @@ public class ParallelRenderer {
                                       modulationPair.getIn().getId() + "; " +
                                       modulationPair.getOut().getId() + "\n");
                     }
+                    jobFileWriter.write("Computed ModOuts:\n");
+                    for (ModulationPair modulationPair: job.getModuleDependencyOuts().get(module)) {
+                        jobFileWriter.write(modulationPair.getOut().getName() + ": " +
+                                      modulationPair.getOut().getId() + "\n");
+                    }
                 }
                 jobFileWriter.close();
             } catch (Exception e) {
