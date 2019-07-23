@@ -5,13 +5,33 @@
 #include "ModuleRecord.h"
 #include "SampleValueParameter.h"
 #include "OptionParameter.h"
+#include "ModIn.h"
+#include "ModOut.h"
 
 class FunctionGenerator : public Module {
 public:
+
+    /* PARAMETERS (see FunctionGenerator.java) */
+
     SampleValueParameter baseFrequency;
     OptionParameter function;
     SampleValueParameter initPhase;
     SampleValueParameter initLevel;
+
+    /* MODINS (see FunctionGenerator.java) */
+
+    ModIn frequency {"frequency"};
+    ModIn phase {"phase"};
+    ModIn level {"level"};
+
+    /* MODOUTS (see FunctionGenerator.java) */
+
+    ModOut mainOut {"mainOut"};
+    ModOut auxOut1 {"auxOut1"};
+    ModOut auxOut2 {"auxOut2"};
+    ModOut auxOut3 {"auxOut3"};
+
+    /* METHODS and CONSTRUCTORS */
 
     void computeNextSample() { return; }
 

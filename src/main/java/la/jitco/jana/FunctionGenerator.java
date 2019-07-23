@@ -1,7 +1,5 @@
 package la.jitco.jana;
 
-import java.math.BigInteger;
-
 public class FunctionGenerator extends Module {
     
     FunctionGenerator(int id)

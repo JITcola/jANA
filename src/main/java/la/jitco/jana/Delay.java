@@ -1,7 +1,5 @@
 package la.jitco.jana;
 
-import java.math.BigInteger;
-
 public class Delay extends Module {
     
     Delay(int id)
