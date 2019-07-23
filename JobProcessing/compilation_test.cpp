@@ -20,6 +20,7 @@ int main(void)
     evaluatorTemplate.jobInfo.precision = "multiprecision";
     evaluatorTemplate.jobInfo.multiprecisionBits = 512;
     Evaluator evaluator {evaluatorTemplate};
+    /*
     for (auto& modulePtr: evaluator.modulePtrs) {
         std::cout << "frequency (" << (modulePtr->getModIn("frequency")).name << ") -> ";
         if ((modulePtr->getModIn("frequency")).source != nullptr)
@@ -41,6 +42,7 @@ int main(void)
         std::cout << std::endl;
         std::cout << "***" << std::endl;
     }
+    */
 
 //    mpfr_out_str (stdout, 10, 0, evaluator.time[44099].multiValue, MPFR_RNDN);
     return 0;

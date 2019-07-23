@@ -117,16 +117,28 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
 
     /* Connect ModIns to ModOuts. */
 
-    for (auto modPair: modInToModOutMap) {
-        /* DEBUG */
-        std::cout << modPair.first
-                  << " "
-                  << modPair.second
-                  << std::endl;
-        /* DEBUG */
-        (modInIdMap[modPair.first]).source =
+    for (auto modPair: modInToModOutMap)
+        modInIdMap[modPair.first].source =
             &modOutIdMap[modPair.second];
+
+    /* DEBUG */
+
+    std::cout << "modulePtr modIn addresses:" << std::endl;
+
+    for (auto& modulePtr: modulePtrs) {
+        std::cout << &(modulePtr->getModIn("frequency")) << std::endl;
+        std::cout << &(modulePtr->getModIn("phase")) << std::endl;
+        std::cout << &(modulePtr->getModIn("level")) << std::endl;
+        std::cout << "***" << std::endl;
     }
+
+    std::cout << "modInToModOutMap modIn addresses:" << std::endl;
+
+    for (auto modPair: modInToModOutMap)
+        std::cout << &modInIdMap[modPair.first] << std::endl;
+
+    /* DEBUG */
+
 }
 
 void Evaluator::evaluate(void)

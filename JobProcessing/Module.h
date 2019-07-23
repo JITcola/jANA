@@ -17,8 +17,6 @@ public:
     bool isMultiprecision;
     int multiprecisionBits;
     std::vector<SampleValue>& time;
-    std::vector<ModIn> modIns;
-    std::vector<ModOut> modOuts;
 
     virtual void computeNextSample(void) = 0;
     virtual ModIn& getModIn(std::string modInName) = 0;
