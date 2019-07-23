@@ -2,7 +2,7 @@ Job ID: 5
 Precision: double
 Multiprecision bits: 64
 Sample rate: 44100
-Length: 1
+Length: 10
 External ModOut dependencies: 24, 25
 External ModIn dependencies: 29, 33
 Module:
@@ -15,6 +15,9 @@ initLevel: 1.0
 Dependent ModIns:
 frequency: 26; 24
 phase: 27; 32
+Computed ModOuts:
+mainOut: 28
+auxOut1: 29
 Module:
 Module type: FunctionGenerator
 Parameters:
@@ -25,3 +28,6 @@ initLevel: 1.0
 Dependent ModIns:
 frequency: 30; 25
 phase: 31; 28
+Computed ModOuts:
+mainOut: 32
+auxOut1: 33
