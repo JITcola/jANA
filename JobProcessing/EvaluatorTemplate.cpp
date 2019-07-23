@@ -98,8 +98,13 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
             modOutIdMap[product.second] =
                 result.modulePtrs.back()->getModOut(
                 product.first);
+            (result.modulePtrs.back()->getModOut(
+                product.first)).isComputed = true;
         }
     }
+
+    /* Connect ModIns to ModOuts. */
+
     return result;
 }
 
