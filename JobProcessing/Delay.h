@@ -1,6 +1,8 @@
 #ifndef DELAY_H
 #define DELAY_H
 
+#include <string>
+
 #include "Module.h"
 #include "ModuleRecord.h"
 #include "SampleValueParameter.h"
@@ -30,6 +32,9 @@ public:
     /* METHODS and CONSTRUCTORS */
 
     void computeNextSample() { return; }
+    
+    ModIn& getModIn(std::string name);
+    ModOut& getModOut(std::string name);
 
     Delay(bool isMultiprecision, 
           int multiprecisionBits,

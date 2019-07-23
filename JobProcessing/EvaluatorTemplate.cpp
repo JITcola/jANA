@@ -82,14 +82,24 @@ Evaluator EvaluatorTemplate::createEvaluator(void)
                     result.multiprecisionBits,
                     result.time,
                     moduleRecord
-                 )
-             };
-             result.modulePtrs.push_back(std::move(newDelayPtr));
-         } else 
+                )
+            };
+            result.modulePtrs.push_back(std::move(newDelayPtr));
+        } else 
              std::cerr << "Failed to create modulePtrs." << std::endl;
-             
+        for (auto dependency: moduleRecord.dependencies) {
+            modInIdMap[dependency.first.second] =
+                result.modulePtrs.back()->getModIn(
+                dependency.first.first);
+            modInToModOutMap[dependency.first.second] =
+                dependency.second;
+        }
+        for (auto product: moduleRecord.products) {
+            modOutIdMap[product.second] =
+                result.modulePtrs.back()->getModOut(
+                product.first);
+        }
     }
-    
     return result;
 }
 

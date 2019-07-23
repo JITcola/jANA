@@ -1,6 +1,8 @@
 #ifndef FUNCTIONGENERATOR_H
 #define FUNCTIONGENERATOR_H
 
+#include <string>
+
 #include "Module.h"
 #include "ModuleRecord.h"
 #include "SampleValueParameter.h"
@@ -34,6 +36,8 @@ public:
     /* METHODS and CONSTRUCTORS */
 
     void computeNextSample() { return; }
+    ModIn& getModIn(std::string modInName);
+    ModOut& getModOut(std::string modOutName);
 
     FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
                       std::vector<SampleValue>& time, 

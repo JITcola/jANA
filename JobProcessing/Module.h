@@ -21,6 +21,8 @@ public:
     std::vector<ModOut> modOuts;
 
     virtual void computeNextSample(void) = 0;
+    virtual ModIn& getModIn(std::string modInName) = 0;
+    virtual ModOut& getModOut(std::string modOutName) = 0;
     static ModuleType moduleTypeFromString(std::string moduleTypeString);
 
     Module(bool isMultiprecision, int multiprecisionBits,
