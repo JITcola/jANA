@@ -10,6 +10,8 @@ class SampleValueParameter : public Parameter {
 public:
     SampleValue value;
 
+    std::string getValueAsString();
+
     SampleValueParameter() = default;
     SampleValueParameter(const SampleValueParameter& sampleValueParameter)
         : Parameter(sampleValueParameter.name), 

@@ -34,6 +34,7 @@ public:
 
     void computeNextSample() { return; }
     
+    Parameter& getParameter(std::string parameterName);
     ModIn& getModIn(std::string name);
     ModOut& getModOut(std::string name);
 

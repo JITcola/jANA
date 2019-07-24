@@ -1,0 +1,75 @@
+Job ID: 3
+Precision: double
+Multiprecision bits: 64
+Sample rate: 44100
+Length: 10
+External ModOut dependencies: 
+External ModIn dependencies: 13
+Module:
+Module type: FunctionGenerator
+Parameters:
+baseFrequency: 0.0
+function: Sine
+initPhase: 0.0
+initLevel: 2.718
+Dependent ModIns:
+frequency: 7; 20
+Computed ModOuts:
+mainOut: 8
+Module:
+Module type: FunctionGenerator
+Parameters:
+baseFrequency: 0.0
+function: Sine
+initPhase: 0.0
+initLevel: 1.0
+Dependent ModIns:
+frequency: 9; 8
+Computed ModOuts:
+mainOut: 10
+Module:
+Module type: FunctionGenerator
+Parameters:
+baseFrequency: 0.0
+function: Sine
+initPhase: 0.0
+initLevel: 1.0
+Dependent ModIns:
+frequency: 11; 10
+Computed ModOuts:
+mainOut: 12
+auxOut1: 13
+Module:
+Module type: Delay
+Parameters:
+initTime: 0.0
+initFeedback: 0.0
+initLevel: 0.0
+Dependent ModIns:
+input: 14; 12
+time: 15; 21
+Computed ModOuts:
+mainOut: 16
+Module:
+Module type: FunctionGenerator
+Parameters:
+baseFrequency: 0.0
+function: Sine
+initPhase: 0.0
+initLevel: 1.0
+Dependent ModIns:
+frequency: 17; 16
+Computed ModOuts:
+mainOut: 18
+Module:
+Module type: FunctionGenerator
+Parameters:
+baseFrequency: 0.0
+function: Sine
+initPhase: 0.0
+initLevel: 1.0
+Dependent ModIns:
+frequency: 19; 18
+Computed ModOuts:
+mainOut: 20
+auxOut1: 21

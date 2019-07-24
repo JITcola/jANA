@@ -22,6 +22,7 @@ public:
     virtual void computeNextSample(void) = 0;
     virtual ModIn& getModIn(std::string modInName) = 0;
     virtual ModOut& getModOut(std::string modOutName) = 0;
+    virtual Parameter& getParameter(std::string parameterName) = 0;
     static ModuleType moduleTypeFromString(std::string moduleTypeString);
 
     Module(ModuleType moduleType, bool isMultiprecision, 

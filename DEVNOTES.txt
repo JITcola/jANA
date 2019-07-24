@@ -40,3 +40,7 @@ g++-9 -shared -fPIC -O3 -I/usr/lib/jvm/java-12-openjdk-amd64/include -I/usr/lib/
 javac ./la/jitco/jana/*.java -h ./la/jitco/jana/
 
 java -cp . -Djava.library.path=./la/jitco/jana la.jitco.jana.ParallelRenderer
+
+***
+
+mpfr_set_str and mpfr_out_str

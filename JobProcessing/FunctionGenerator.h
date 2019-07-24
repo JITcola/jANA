@@ -37,6 +37,8 @@ public:
     /* METHODS and CONSTRUCTORS */
 
     void computeNextSample() { return; }
+
+    Parameter& getParameter(std::string parameterName);
     ModIn& getModIn(std::string modInName);
     ModOut& getModOut(std::string modOutName);
 

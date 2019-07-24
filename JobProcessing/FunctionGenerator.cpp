@@ -4,6 +4,21 @@
 #include "ModIn.h"
 #include "ModOut.h"
 
+Parameter& FunctionGenerator::getParameter(std::string parameterName)
+{
+    if (parameterName == "baseFrequency")
+        return baseFrequency;
+    else if (parameterName == "function")
+        return function;
+    else if (parameterName == "initPhase")
+        return initPhase;
+    else if (parameterName == "initLevel")
+        return initLevel;
+    else
+        return baseFrequency;
+}
+
+
 ModIn& FunctionGenerator::getModIn(std::string modInName)
 {
     if (modInName == "frequency")

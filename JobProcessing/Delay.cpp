@@ -4,6 +4,19 @@
 #include "ModIn.h"
 #include "ModOut.h"
 
+Parameter& Delay::getParameter(std::string parameterName)
+{
+    if (parameterName == "initTime")
+        return initTime;
+    else if (parameterName == "initFeedback")
+        return initFeedback;
+    else if (parameterName == "initLevel")
+        return initLevel;
+    else
+        return initTime;
+}
+
+
 ModIn& Delay::getModIn(std::string modInName)
 {
     if (modInName == "input")
