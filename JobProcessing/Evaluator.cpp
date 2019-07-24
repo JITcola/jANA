@@ -26,6 +26,7 @@ Evaluator::Evaluator(EvaluatorTemplate evaluatorTemplate)
     isMultiprecision = 
         evaluatorTemplate.jobInfo.precision == "double" ? false : true;
     multiprecisionBits = evaluatorTemplate.jobInfo.multiprecisionBits;
+    sampleRate = evaluatorTemplate.jobInfo.sampleRate;
     currentSample = static_cast<long int>(0);
     
     /* Initialize time vector. */

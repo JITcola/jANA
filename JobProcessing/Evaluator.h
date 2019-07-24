@@ -14,6 +14,7 @@ class Evaluator {
 public:
     bool isMultiprecision;
     int multiprecisionBits;
+    int sampleRate;
     std::vector<std::unique_ptr<Module>> modulePtrs;
     long int currentSample;
     std::vector<SampleValue> time;
