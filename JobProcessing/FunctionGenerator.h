@@ -9,6 +9,7 @@
 #include "OptionParameter.h"
 #include "ModIn.h"
 #include "ModOut.h"
+#include "ModuleType.h"
 
 class FunctionGenerator : public Module {
 public:
@@ -42,7 +43,8 @@ public:
     FunctionGenerator(bool isMultiprecision, int multiprecisionBits,
                       std::vector<SampleValue>& time, 
                       ModuleRecord& moduleRecord)
-        : Module(isMultiprecision, multiprecisionBits, time),
+        : Module(ModuleType::FunctionGenerator, isMultiprecision, 
+                 multiprecisionBits, time),
           baseFrequency {
               moduleRecord.getSampleValueParameter("baseFrequency")
           },

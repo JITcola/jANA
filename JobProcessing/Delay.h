@@ -8,6 +8,7 @@
 #include "SampleValueParameter.h"
 #include "ModIn.h"
 #include "ModOut.h"
+#include "ModuleType.h"
 
 class Delay : public Module {
 public:
@@ -40,7 +41,8 @@ public:
           int multiprecisionBits,
           std::vector<SampleValue>& time, 
           ModuleRecord& moduleRecord)
-        : Module(isMultiprecision, multiprecisionBits, time),
+        : Module(ModuleType::Delay, isMultiprecision, 
+                 multiprecisionBits, time),
           initTime {moduleRecord.getSampleValueParameter("initTime")},
           initFeedback {moduleRecord.getSampleValueParameter("initFeedback")},
           initLevel {moduleRecord.getSampleValueParameter("initLevel")}

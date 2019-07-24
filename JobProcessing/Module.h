@@ -14,6 +14,7 @@ class Evaluator;
 
 class Module {
 public:
+    ModuleType moduleType;
     bool isMultiprecision;
     int multiprecisionBits;
     std::vector<SampleValue>& time;
@@ -23,9 +24,10 @@ public:
     virtual ModOut& getModOut(std::string modOutName) = 0;
     static ModuleType moduleTypeFromString(std::string moduleTypeString);
 
-    Module(bool isMultiprecision, int multiprecisionBits,
-           std::vector<SampleValue>& time)
-        : isMultiprecision {isMultiprecision}, 
+    Module(ModuleType moduleType, bool isMultiprecision, 
+           int multiprecisionBits, std::vector<SampleValue>& time)
+        : moduleType {moduleType},
+          isMultiprecision {isMultiprecision}, 
           multiprecisionBits {multiprecisionBits},
           time {time}
     {}
