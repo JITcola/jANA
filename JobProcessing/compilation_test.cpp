@@ -19,7 +19,7 @@ int main(void)
     EvaluatorTemplate evaluatorTemplate;
     evaluatorTemplate = reader.readJobFile(3);
     evaluatorTemplate.jobInfo.precision = "multiprecision";
-    evaluatorTemplate.jobInfo.multiprecisionBits = 512;
+    evaluatorTemplate.jobInfo.multiprecisionBits = 100;
     Evaluator evaluator {evaluatorTemplate};
     for (auto& modulePtr: evaluator.modulePtrs) {
         if (modulePtr->moduleType == ModuleType::FunctionGenerator) {

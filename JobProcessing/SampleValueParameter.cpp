@@ -1,6 +1,7 @@
 #include "SampleValueParameter.h"
 
 #include <string>
+#include <sstream>
 #include <gmp.h>
 #include <mpfr.h>
 
@@ -13,7 +14,10 @@ std::string SampleValueParameter::getValueAsString()
         mpfr_free_str (str);
         return valueString;
     } else {
-        std::string valueString {std::to_string(value.doubleValue)};
+        std::ostringstream os;
+        os.precision(20);
+        os << value.doubleValue;
+        std::string valueString {os.str()};
         return valueString;
     }
 }

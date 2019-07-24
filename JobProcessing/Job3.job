@@ -11,7 +11,7 @@ Parameters:
 baseFrequency: 0.0
 function: Sine
 initPhase: 0.0
-initLevel: 2.718
+initLevel: 2.7189203048192030482
 Dependent ModIns:
 frequency: 7; 20
 Computed ModOuts:
