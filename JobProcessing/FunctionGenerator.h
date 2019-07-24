@@ -46,11 +46,16 @@ public:
         : Module(ModuleType::FunctionGenerator, isMultiprecision, 
                  multiprecisionBits, time),
           baseFrequency {
-              moduleRecord.getSampleValueParameter("baseFrequency")
+              moduleRecord.getSampleValueParameter(
+              "baseFrequency", isMultiprecision, multiprecisionBits)
           },
           function {moduleRecord.getOptionParameter("function")},
-          initPhase {moduleRecord.getSampleValueParameter("initPhase")},
-          initLevel {moduleRecord.getSampleValueParameter("initLevel")}
+          initPhase {moduleRecord.getSampleValueParameter(
+              "initPhase", isMultiprecision, multiprecisionBits)
+          },
+          initLevel {moduleRecord.getSampleValueParameter(
+              "initLevel", isMultiprecision, multiprecisionBits)
+          }
     {}
 };
 

@@ -43,9 +43,15 @@ public:
           ModuleRecord& moduleRecord)
         : Module(ModuleType::Delay, isMultiprecision, 
                  multiprecisionBits, time),
-          initTime {moduleRecord.getSampleValueParameter("initTime")},
-          initFeedback {moduleRecord.getSampleValueParameter("initFeedback")},
-          initLevel {moduleRecord.getSampleValueParameter("initLevel")}
+          initTime {moduleRecord.getSampleValueParameter(
+              "initTime", isMultiprecision, multiprecisionBits)
+          },
+          initFeedback {moduleRecord.getSampleValueParameter(
+              "initFeedback", isMultiprecision, multiprecisionBits)
+          },
+          initLevel {moduleRecord.getSampleValueParameter(
+              "initLevel", isMultiprecision, multiprecisionBits)
+          }
     {}
 };
 
