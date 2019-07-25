@@ -12,6 +12,7 @@
 #include "Delay.h"
 #include "SampleValue.h"
 #include "ModuleType.h"
+#include "DatFileReader.h"
 
 int main(void)
 {
@@ -19,7 +20,7 @@ int main(void)
     EvaluatorTemplate evaluatorTemplate;
     evaluatorTemplate = reader.readJobFile(3);
     evaluatorTemplate.jobInfo.precision = "multiprecision";
-    evaluatorTemplate.jobInfo.multiprecisionBits = 100;
+    evaluatorTemplate.jobInfo.multiprecisionBits = 64;
     Evaluator evaluator {evaluatorTemplate};
     for (auto& modulePtr: evaluator.modulePtrs) {
         if (modulePtr->moduleType == ModuleType::FunctionGenerator) {
@@ -35,6 +36,12 @@ int main(void)
         }
         std::cout << "***" << std::endl;
     }
+
+    DatFileReader datFileReader;
+    datFileReader.getData(11);
+    std::cout << datFileReader.modOutId << std::endl
+              << datFileReader.isMultiprecision << std::endl;
+
 
 //    mpfr_out_str (stdout, 10, 0, evaluator.time[44099].multiValue, MPFR_RNDN);
     return 0;
