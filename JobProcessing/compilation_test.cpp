@@ -39,8 +39,10 @@ int main(void)
 
     DatFileReader datFileReader;
     datFileReader.getData(11);
+/*
     std::cout << datFileReader.modOutId << std::endl
               << datFileReader.isMultiprecision << std::endl;
+*/
 
 
 //    mpfr_out_str (stdout, 10, 0, evaluator.time[44099].multiValue, MPFR_RNDN);
