@@ -22,8 +22,11 @@ void DatFileReader::getData(int modOutId)
     length = stoi(chompLine(datFile, true));
     chompLine(datFile);
     string dataString;
-    while (datFile >> dataString) {
-    }
-
+    if (isMultiprecision)
+        while (datFile >> dataString)
+            data.push_back(SampleValue(true, multiprecisionBits, dataString));
+    else
+        while (datFile >> dataString)
+            data.push_back(SampleValue(stod(dataString)));
     datFile.close();
 }

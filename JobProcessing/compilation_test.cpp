@@ -39,6 +39,9 @@ int main(void)
 
     DatFileReader datFileReader;
     datFileReader.getData(11);
+    for (auto value: datFileReader.data)
+        std::cout << value.isMultiprecision << '\n';
+
 /*
     std::cout << datFileReader.modOutId << std::endl
               << datFileReader.isMultiprecision << std::endl;
