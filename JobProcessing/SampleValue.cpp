@@ -1,6 +1,8 @@
 #include "SampleValue.h"
 
 #include <cstdio>
+#include <string>
+#include <sstream>
 #include <gmp.h>
 #include <mpfr.h>
 
@@ -51,4 +53,21 @@ SampleValue::~SampleValue()
 {
     if (isMultiprecision)
         mpfr_clear (multiValue);
+}
+
+std::string SampleValue::to_string(void)
+{
+    if (isMultiprecision) {
+        char* str;
+        mpfr_asprintf (&str, "%Re", multiValue);
+        std::string valueString {str};
+        mpfr_free_str (str);
+        return valueString;
+    } else {
+        std::ostringstream os;
+        os.precision(20);
+        os << doubleValue;
+        std::string valueString {os.str()};
+        return valueString;
+    }
 }

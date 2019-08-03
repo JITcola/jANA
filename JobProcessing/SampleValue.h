@@ -20,6 +20,7 @@ public:
     SampleValue(bool isMultiprecision, int precision);
     SampleValue(bool isMultiprecision, int precision, std::string valueString);
     ~SampleValue();
+    std::string to_string(void);
 };
 
 #endif

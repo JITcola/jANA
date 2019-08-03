@@ -40,7 +40,7 @@ int main(void)
     DatFileReader datFileReader;
     datFileReader.getData(11);
     for (auto value: datFileReader.data)
-        std::cout << value.isMultiprecision << '\n';
+        std::cout << value.to_string() << '\n';
 
 /*
     std::cout << datFileReader.modOutId << std::endl
