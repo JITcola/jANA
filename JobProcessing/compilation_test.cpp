@@ -46,11 +46,15 @@ int main(void)
     std::cout << "************************\n";
 
     std::vector<SampleValue> v1, v2;
-    v1.push_back(SampleValue(1.2834832));
-    v1.push_back(SampleValue(2.813838289));
-    v1.push_back(SampleValue(0.82918353));
-    v2 = Dsp::padUp(v1, 2);
+    v1.push_back(SampleValue(true, 256, "1.2834832"));
+    v1.push_back(SampleValue(true, 256, "2.813838289"));
+    v1.push_back(SampleValue(true, 256, "0.82918353"));
+    v2 = Dsp::padUp(v1, 3);
     for (auto value: v2)
+        std::cout << value.to_string() << '\n';
+    v1 = Dsp::decimate(v2, 3);
+    std::cout << "*************************\n";
+    for (auto value: v1)
         std::cout << value.to_string() << '\n';
 
 

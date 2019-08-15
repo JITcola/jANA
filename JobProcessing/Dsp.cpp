@@ -29,6 +29,9 @@ vector<SampleValue> Dsp::decimate(const vector<SampleValue>& signal,
                                   const int divisor)
 {
     vector<SampleValue> result;
+    for (long int i = 0; i < signal.size(); ++i)
+        if (i % divisor == 0)
+            result.push_back(signal[i]);
     return result;
 }
 
