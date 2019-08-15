@@ -23,6 +23,8 @@ int main(void)
     evaluatorTemplate.jobInfo.precision = "multiprecision";
     evaluatorTemplate.jobInfo.multiprecisionBits = 64;
     Evaluator evaluator {evaluatorTemplate};
+
+    /*
     for (auto& modulePtr: evaluator.modulePtrs) {
         if (modulePtr->moduleType == ModuleType::FunctionGenerator) {
             std::cout << "initLevel value: "
@@ -44,6 +46,7 @@ int main(void)
         std::cout << value.to_string() << '\n';
 
     std::cout << "************************\n";
+    */
 
     std::vector<SampleValue> v1, v2;
     v1.push_back(SampleValue(true, 256, "1.2834832"));
@@ -55,6 +58,13 @@ int main(void)
     v1 = Dsp::decimate(v2, 3);
     std::cout << "*************************\n";
     for (auto value: v1)
+        std::cout << value.to_string() << '\n';
+    std::vector<SampleValue> v3, v4;
+    v3.push_back(SampleValue(true, 256, "1.0"));
+    v3.push_back(SampleValue(true, 256, "0.0"));
+    v3.push_back(SampleValue(true, 256, "0.0"));
+    v4 = Dsp::iDft(v3);
+    for (auto value: v4)
         std::cout << value.to_string() << '\n';
 
 

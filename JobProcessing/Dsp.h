@@ -15,8 +15,8 @@ public:
                                      const int multiplier);
     static vector<SampleValue> decimate(const vector<SampleValue>& signal,
                                         const int divisor);
+    static constexpr double pi = 3.14159265358979323846264338327950288419;
 
-private:
     static vector<SampleValue> iDft(const vector<SampleValue> response);    
 };
 
