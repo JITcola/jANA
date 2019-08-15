@@ -6,6 +6,7 @@
 
 #include "SampleValue.h"
 #include "Algorithm.h"
+#include "DatFileReader.h"
 
 class Module;
 
@@ -21,6 +22,9 @@ public:
         : name {name}, isComputed {false} {}
     ModOut(std::string name, bool isComputed) 
         : name {name}, isComputed {isComputed} {}
+
+    void samplesFromDat(const DatFileReader& dfr,
+                           int targetSampleRate);
 };
 
 #endif

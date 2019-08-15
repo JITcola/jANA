@@ -13,6 +13,7 @@
 #include "SampleValue.h"
 #include "ModuleType.h"
 #include "DatFileReader.h"
+#include "Dsp.h"
 
 int main(void)
 {
@@ -41,6 +42,17 @@ int main(void)
     datFileReader.getData(11);
     for (auto value: datFileReader.data)
         std::cout << value.to_string() << '\n';
+
+    std::cout << "************************\n";
+
+    std::vector<SampleValue> v1, v2;
+    v1.push_back(SampleValue(1.2834832));
+    v1.push_back(SampleValue(2.813838289));
+    v1.push_back(SampleValue(0.82918353));
+    v2 = Dsp::padUp(v1, 2);
+    for (auto value: v2)
+        std::cout << value.to_string() << '\n';
+
 
 /*
     std::cout << datFileReader.modOutId << std::endl
