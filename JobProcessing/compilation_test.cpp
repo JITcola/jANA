@@ -63,6 +63,10 @@ int main(void)
     v3.push_back(SampleValue(true, 256, "1.0"));
     v3.push_back(SampleValue(true, 256, "0.0"));
     v3.push_back(SampleValue(true, 256, "1.0"));
+    v3.push_back(SampleValue(true, 256, "0.0"));
+    v3.push_back(SampleValue(true, 256, "1.0"));
+    v3.push_back(SampleValue(true, 256, "1.0"));
+    v3.push_back(SampleValue(true, 256, "1.0"));
     v4 = Dsp::iDft(v3);
     for (auto value: v4)
         std::cout << value.to_string() << '\n';
