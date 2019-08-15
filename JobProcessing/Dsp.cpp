@@ -79,7 +79,7 @@ vector<SampleValue> Dsp::iDft(const vector<SampleValue> response)
         }
         mpfr_clears (coeff, i_multi, k_multi, response_multi, size_multi,
                      pi_multi, static_cast<mpfr_ptr>(0));
-    } else
+    } else {
         for (int i = 0; i < response.size(); ++i) {
             double coeff = 0;
             for (int k = 0; k < response.size(); ++k)
@@ -88,5 +88,11 @@ vector<SampleValue> Dsp::iDft(const vector<SampleValue> response)
             coeff /= response.size();
             result.push_back(SampleValue(coeff));
         }
+        double total = 0;
+        for (auto sample: result)
+            total += sample.doubleValue;
+        for (long int i = 0; i < result.size(); ++i)
+            result[i].doubleValue /= total;
+    }
     return result;
 }
