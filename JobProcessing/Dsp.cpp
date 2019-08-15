@@ -47,6 +47,13 @@ vector<SampleValue> Dsp::iDft(const vector<SampleValue> response)
     if (response.size() == 0)
         return result;
     if (response[0].isMultiprecision) {
+        mpfr_t *result_array = new mpfr_t[response.size()];
+        if (!result_array)
+            return result;
+        for (int i = 0; i < response.size(); ++i)
+            mpfr_init2 (result_array[i],
+                        static_cast<mpfr_prec_t>(
+                        response[0].multiprecisionBits));
         mpfr_t coeff, i_multi, k_multi, response_multi, size_multi, pi_multi;
         mpfr_inits2 (static_cast<mpfr_prec_t>(
                      response[0].multiprecisionBits),
@@ -70,13 +77,28 @@ vector<SampleValue> Dsp::iDft(const vector<SampleValue> response)
                 mpfr_add (coeff, coeff, response_multi, MPFR_RNDN);
             }
             mpfr_div (coeff, coeff, size_multi, MPFR_RNDN);
+            mpfr_set (result_array[i], coeff, MPFR_RNDN);
+        }
+        mpfr_t divisor;
+        mpfr_init2 (divisor,
+                    static_cast<mpfr_prec_t>(
+                    response[0].multiprecisionBits));
+        mpfr_set_si (divisor, 0, MPFR_RNDN);
+        for (int i = 0; i < response.size(); ++i)
+            mpfr_add (divisor, divisor, result_array[i], MPFR_RNDN);
+        for (int i = 0; i < response.size(); ++i)
+            mpfr_div (result_array[i], result_array[i], divisor, MPFR_RNDN);
+        for (int i = 0; i < response.size(); ++i) {
             char* str;
-            mpfr_asprintf (&str, "%Re", coeff);
+            mpfr_asprintf (&str, "%Re", result_array[i]);
             std::string valueString {str};
             mpfr_free_str (str);
             result.push_back(SampleValue(true, response[0].multiprecisionBits,
                                          valueString));
         }
+        for (int i = 0; i < response.size(); ++i)
+            mpfr_clear (result_array[i]);
+        delete[] result_array;
         mpfr_clears (coeff, i_multi, k_multi, response_multi, size_multi,
                      pi_multi, static_cast<mpfr_ptr>(0));
     } else {
