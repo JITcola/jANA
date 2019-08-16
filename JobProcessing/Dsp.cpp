@@ -10,30 +10,31 @@ vector<SampleValue> Dsp::lpf(const vector<SampleValue>& signal,
                              const int sampleRate,
                              const int cutoff)
 {
+    const int taps = 256;
     vector<SampleValue> result;
     if (signal.size() == 0)
         return result;
-    int n {static_cast<int>(floor((256*cutoff)/((double)sampleRate)))};
+    int n {static_cast<int>(floor((taps*cutoff)/((double)sampleRate)))};
     vector<SampleValue> response;
     if (signal[0].isMultiprecision) {
         for (int i = 0; i <= n; ++i)
             response.push_back(SampleValue(true,
                                            signal[0].multiprecisionBits,
                                            "1.0"));
-        for (int i = n+1; i <= (256-n-1); ++i)
+        for (int i = n+1; i <= (taps-n-1); ++i)
             response.push_back(SampleValue(true,
                                            signal[0].multiprecisionBits,
                                            "0.0"));
-        for (int i = 256-n; i < 256; ++i)
+        for (int i = taps-n; i < taps; ++i)
             response.push_back(SampleValue(true,
                                            signal[0].multiprecisionBits,
                                            "1.0"));
     } else {
         for (int i = 0; i <= n; ++i)
             response.push_back(SampleValue(1));
-        for (int i = n+1; i <= (256-n-1); ++i)
+        for (int i = n+1; i <= (taps-n-1); ++i)
             response.push_back(SampleValue(0));
-        for (int i = 256-n; i < 256; ++i)
+        for (int i = taps-n; i < taps; ++i)
             response.push_back(SampleValue(1));
     }
     vector<SampleValue> coeffs = iDft(response);
@@ -43,16 +44,16 @@ vector<SampleValue> Dsp::lpf(const vector<SampleValue>& signal,
     } else
         for (long int i = 0; i < signal.size(); ++i) {
             double sampleValue = 0;
-            if (i < 255) {
+            if (i < taps-1) {
                 for (int j = 0; j <= i; ++j)
                     sampleValue = sampleValue +
                                   signal[j].doubleValue *
-                                  coeffs[255 - i + j].doubleValue;
+                                  coeffs[taps - 1 - i + j].doubleValue;
             } else {
-                for (int j = i - 255; j <= i; ++j)
+                for (int j = i - (taps-1); j <= i; ++j)
                     sampleValue = sampleValue +
                                   signal[j].doubleValue *
-                                  coeffs[255 - i + j].doubleValue;
+                                  coeffs[taps - 1 - i + j].doubleValue;
             }
             result.push_back(SampleValue(sampleValue));
         }
