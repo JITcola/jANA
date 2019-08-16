@@ -11,6 +11,52 @@ vector<SampleValue> Dsp::lpf(const vector<SampleValue>& signal,
                              const int cutoff)
 {
     vector<SampleValue> result;
+    if (signal.size() == 0)
+        return result;
+    int n {static_cast<int>(floor((256*cutoff)/((double)sampleRate)))};
+    vector<SampleValue> response;
+    if (signal[0].isMultiprecision) {
+        for (int i = 0; i <= n; ++i)
+            response.push_back(SampleValue(true,
+                                           signal[0].multiprecisionBits,
+                                           "1.0"));
+        for (int i = n+1; i <= (256-n-1); ++i)
+            response.push_back(SampleValue(true,
+                                           signal[0].multiprecisionBits,
+                                           "0.0"));
+        for (int i = 256-n; i < 256; ++i)
+            response.push_back(SampleValue(true,
+                                           signal[0].multiprecisionBits,
+                                           "1.0"));
+    } else {
+        for (int i = 0; i <= n; ++i)
+            response.push_back(SampleValue(1));
+        for (int i = n+1; i <= (256-n-1); ++i)
+            response.push_back(SampleValue(0));
+        for (int i = 256-n; i < 256; ++i)
+            response.push_back(SampleValue(1));
+    }
+    vector<SampleValue> coeffs = iDft(response);
+    if (signal[0].isMultiprecision) {
+        return result; // TODO: WRITE THIS CODE
+
+    } else
+        for (long int i = 0; i < signal.size(); ++i) {
+            double sampleValue = 0;
+            if (i < 255) {
+                for (int j = 0; j <= i; ++j)
+                    sampleValue = sampleValue +
+                                  signal[j].doubleValue *
+                                  coeffs[255 - i + j].doubleValue;
+            } else {
+                for (int j = i - 255; j <= i; ++j)
+                    sampleValue = sampleValue +
+                                  signal[j].doubleValue *
+                                  coeffs[255 - i + j].doubleValue;
+            }
+            result.push_back(SampleValue(sampleValue));
+        }
+
     return result;
 }
 
@@ -67,7 +113,6 @@ vector<SampleValue> Dsp::iDft(const vector<SampleValue> response)
             for (int k = 0; k < response.size(); ++k) {
                 mpfr_set_si (k_multi, k, MPFR_RNDN);
                 mpfr_set (response_multi, response[k].multiValue, MPFR_RNDN);
-
                 mpfr_mul (k_multi, k_multi, i_multi, MPFR_RNDN);
                 mpfr_mul_si (k_multi, k_multi, 2, MPFR_RNDN);
                 mpfr_mul (k_multi, k_multi, pi_multi, MPFR_RNDN);

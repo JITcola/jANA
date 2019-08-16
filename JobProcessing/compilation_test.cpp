@@ -1,7 +1,9 @@
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cstdio>
+#include <cmath>
 #include <gmp.h>
 #include <mpfr.h>
 
@@ -17,6 +19,9 @@
 
 int main(void)
 {
+
+/*    
+
     JobFileReader reader;
     EvaluatorTemplate evaluatorTemplate;
     evaluatorTemplate = reader.readJobFile(3);
@@ -24,7 +29,6 @@ int main(void)
     evaluatorTemplate.jobInfo.multiprecisionBits = 64;
     Evaluator evaluator {evaluatorTemplate};
 
-    /*
     for (auto& modulePtr: evaluator.modulePtrs) {
         if (modulePtr->moduleType == ModuleType::FunctionGenerator) {
             std::cout << "initLevel value: "
@@ -46,7 +50,6 @@ int main(void)
         std::cout << value.to_string() << '\n';
 
     std::cout << "************************\n";
-    */
 
     std::vector<SampleValue> v1, v2;
     v1.push_back(SampleValue(true, 256, "1.2834832"));
@@ -72,12 +75,28 @@ int main(void)
         std::cout << value.to_string() << '\n';
 
 
-/*
     std::cout << datFileReader.modOutId << std::endl
               << datFileReader.isMultiprecision << std::endl;
+
+
+    mpfr_out_str (stdout, 10, 0, evaluator.time[44099].multiValue, MPFR_RNDN);
+
 */
 
+    std::vector<SampleValue> signal;
+    std::vector<SampleValue> filtered;
 
-//    mpfr_out_str (stdout, 10, 0, evaluator.time[44099].multiValue, MPFR_RNDN);
+    for (long int i = 0; i < 44100; ++i)
+        signal.push_back(SampleValue(sin(2*Dsp::pi*3000*i/44100.0)));
+    filtered = Dsp::lpf(signal, 44100, 1000);
+    std::ofstream sigFile {"sigFile.dat"};
+    std::ofstream filterFile {"filterFile.dat"};
+    for (auto value: signal)
+        sigFile << value.to_string() << '\n';
+    for (auto value: filtered)
+        filterFile << value.to_string() << '\n';
+    sigFile.close();
+    filterFile.close();
+
     return 0;
 }
