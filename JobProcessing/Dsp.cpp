@@ -39,18 +39,49 @@ vector<SampleValue> Dsp::lpf(const vector<SampleValue>& signal,
     }
     vector<SampleValue> coeffs = iDft(response);
     if (signal[0].isMultiprecision) {
-        return result; // TODO: WRITE THIS CODE
+        mpfr_t sampleValue, signalValue;
+        mpfr_inits2 (static_cast<mpfr_prec_t>(signal[0].multiprecisionBits),
+                     sampleValue,
+                     signalValue,
+                     static_cast<mpfr_ptr>(0));
+        for (long int i = 0; i < signal.size(); ++i) {
+            mpfr_set_si (sampleValue, 0, MPFR_RNDN);
+            if (i < taps-1) {
+                for (long int j = 0; j <= i; ++j) {
+                    mpfr_set (signalValue, signal[j].multiValue, MPFR_RNDN);
+                    mpfr_mul (signalValue, signalValue,
+                              coeffs[taps - 1 - i + j].multiValue, MPFR_RNDN);
+                    mpfr_add (sampleValue, sampleValue, signalValue,
+                              MPFR_RNDN);
+                }
+            } else {
+                for (long int j = i - (taps-1); j <= i; ++j) {
+                    mpfr_set (signalValue, signal[j].multiValue, MPFR_RNDN);
+                    mpfr_mul (signalValue, signalValue,
+                              coeffs[taps - 1 - i + j].multiValue, MPFR_RNDN);
+                    mpfr_add (sampleValue, sampleValue, signalValue,
+                              MPFR_RNDN);
+                }
+            }
+            char* str;
+            mpfr_asprintf (&str, "%Re", sampleValue);
+            std::string valueString {str};
+            mpfr_free_str (str);
+            result.push_back(SampleValue(true, signal[0].multiprecisionBits,
+                                         valueString));
 
+        }
+        mpfr_clears (sampleValue, signalValue, static_cast<mpfr_ptr>(0));
     } else
         for (long int i = 0; i < signal.size(); ++i) {
             double sampleValue = 0;
             if (i < taps-1) {
-                for (int j = 0; j <= i; ++j)
+                for (long int j = 0; j <= i; ++j)
                     sampleValue = sampleValue +
                                   signal[j].doubleValue *
                                   coeffs[taps - 1 - i + j].doubleValue;
             } else {
-                for (int j = i - (taps-1); j <= i; ++j)
+                for (long int j = i - (taps-1); j <= i; ++j)
                     sampleValue = sampleValue +
                                   signal[j].doubleValue *
                                   coeffs[taps - 1 - i + j].doubleValue;

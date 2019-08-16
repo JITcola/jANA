@@ -98,5 +98,38 @@ int main(void)
     sigFile.close();
     filterFile.close();
 
+    std::vector<SampleValue> signalMulti;
+    std::vector<SampleValue> filteredMulti;
+
+    for (long int i = 0; i < 44100; ++i) {
+        mpfr_t sampleValue;
+        mpfr_t pi_multi;
+        mpfr_inits2 (static_cast<mpfr_prec_t>(256), sampleValue, pi_multi,
+                     static_cast<mpfr_ptr>(0));
+        mpfr_set_si (sampleValue, 2, MPFR_RNDN);
+        mpfr_const_pi (pi_multi, MPFR_RNDN);
+        mpfr_mul (sampleValue, sampleValue, pi_multi, MPFR_RNDN);
+        mpfr_mul_si (sampleValue, sampleValue, 3000, MPFR_RNDN);
+        mpfr_mul_si (sampleValue, sampleValue, i, MPFR_RNDN);
+        mpfr_div_si (sampleValue, sampleValue, 44100, MPFR_RNDN);
+        mpfr_sin (sampleValue, sampleValue, MPFR_RNDN);
+        char* str;
+        mpfr_asprintf (&str, "%Re", sampleValue);
+        std::string valueString {str};
+        mpfr_free_str (str);
+        signalMulti.push_back(SampleValue(true, 256, valueString));
+        mpfr_clears (sampleValue, pi_multi, static_cast<mpfr_ptr>(0));
+    }
+
+    filteredMulti = Dsp::lpf(signalMulti, 44100, 1000);
+    std::ofstream sigMultiFile {"sigMultiFile.dat"};
+    std::ofstream filterMultiFile {"filterMultiFile.dat"};
+    for (auto value: signalMulti)
+        sigMultiFile << value.to_string() << '\n';
+    for (auto value: filteredMulti)
+        filterMultiFile << value.to_string() << '\n';
+    sigMultiFile.close();
+    filterMultiFile.close();
+
     return 0;
 }
